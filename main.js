@@ -43,6 +43,22 @@ app.post('/api/auth', (request, response) => {
 
 });
 
+// Get all campaigns
+app.post('/api/campaigns', (request, response) => {
+    const {token} = request.body;
+    const url = process.env.CAMPAIGNS_URL;
+    const arr = {
+        params: {
+            token
+        }
+    }
+    axios.get(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ data: res.data }));
+    })
+})
+
 // Create Contact
 app.post('/api/swell', (request, response) => {
     const {token, phone, name, email, locations, campaign_id, send_at} = request.body;
