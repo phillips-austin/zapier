@@ -35,7 +35,7 @@ app.post('/api/auth', (request, response) => {
     axios.get(url, arr, config)
     .then(res => {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ Authenticated: true }));
+        response.end(JSON.stringify(res.data.data));
     })
     .catch(err => {
         response.send(500, {Authenticated: false})
