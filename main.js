@@ -14,12 +14,7 @@ app.use((err, req, res, next) => {
     res.json(err);
 });
 
-app.get('*', (req, res) => {
-    res.send(200, {message: "You made it."})
-    console.log("Made it")
-})
-
-app.get('/api/authentication', (req, res) => {
+app.get('/api/auth', (req, res) => {
     res.send(200, {message: 'Authenticated'})
 });
 
