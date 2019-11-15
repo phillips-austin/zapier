@@ -16,6 +16,7 @@ app.use((err, req, res, next) => {
 
 app.post('/api/auth', (req, res) => {
     console.log(req)
+    res.send(req.body.token)
 });
 
 app.post('/api/contact', (request, response) => {
