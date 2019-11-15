@@ -15,7 +15,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get('/api/auth', (req, res) => {
-    res.send(200, {message: 'Authenticated'})
+    res.send(200, req)
 });
 
 app.post('/api/contact', (request, response) => {
