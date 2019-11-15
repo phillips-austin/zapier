@@ -32,10 +32,11 @@ app.post('/api/auth', (request, response) => {
     .then(res => {
         console.log(res)
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ message: Success }));
+        response.end(JSON.stringify({ message: "Success" }));
     })
     .catch(err => {
-        response.send(500, {message: 'Unable to authenticate!'})
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ message: "Failed" }));
     })
 
 });
