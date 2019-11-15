@@ -44,29 +44,28 @@ app.post('/api/auth', (request, response) => {
 });
 
 // Create Contact
-app.post('/api/contact', (request, response) => {
-    const {token, phone, name, email, locations} = request.body;
+app.post('/api/swell', (request, response) => {
+    const {token, phone, name, email, locations, campaign_id, send_at} = request.body;
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
         name,
         email,
         phone,
-        locations: {id: locations}
+        locations: {id: 1936}
     }
     axios.post(url, arr, config)
     .then(res => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ id: res.data.id, locations_id: locations }));
+        sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
         console.log(err)
-        response.send(500, {Authenticated: false})
+        response.send(500, {Message: "Oops something went wrong... Please make sure the ID's are correct"})
     })
 });
 
-app.post('/api/invite', (request, response) => {
-    const {token, location_id, send_at, contact_id, campaign_id} = request.body;
+sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
+
     const url = process.env.INVITES_URL;
     const datetime = new Date();
     const formatted = moment(datetime).format("YYYY-MM-DD" + " " + send_at)
@@ -87,6 +86,6 @@ app.post('/api/invite', (request, response) => {
         console.log(err.response.data)
         response.send(500, {Message: "Invite failed to schedule"})
     })
-})
+}
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
