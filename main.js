@@ -32,11 +32,11 @@ app.post('/api/auth', (request, response) => {
     }
     axios.get(url, arr, config)
     .then(res => {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ Authenticated: true }));
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ Authenticated: true, token }));
     })
     .catch(err => {
-        res.send(500, {Authenticated: false})
+        response.send(500, {Authenticated: false})
     })
 
 });
