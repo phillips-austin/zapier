@@ -59,13 +59,13 @@ app.post('/api/swell', (request, response) => {
         sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
-        console.log(err)
+        console.log(err.response.data)
         response.send(500, {error: err.response.data})
     })
 });
 
+// Create Invite
 sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
-
     const url = process.env.INVITES_URL;
     const datetime = new Date();
     const formatted = moment(datetime).format("YYYY-MM-DD" + " " + send_at)
@@ -80,11 +80,11 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
     axios.post(url, arr, config)
     .then(res => {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ status: "Success" }));
+        response.end(JSON.stringify({ data: res.data }));
     })
     .catch(err => {
         console.log(err.response.data)
-        response.send(500, {Message: "Invite failed to schedule"})
+        response.send(500, {error: err.response.data})
     })
 }
 
