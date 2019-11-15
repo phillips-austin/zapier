@@ -52,7 +52,7 @@ app.post('/api/swell', (request, response) => {
         name,
         email,
         phone,
-        locations: {id: 1936}
+        locations: {id: locations}
     }
     axios.post(url, arr, config)
     .then(res => {
