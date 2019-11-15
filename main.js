@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const axios = require('axios');
 require('dotenv').config();
 const port = process.env.PORT;
 
@@ -14,10 +15,29 @@ app.use((err, req, res, next) => {
     res.json(err);
 });
 
-app.post('/api/auth', (req, res) => {
-    console.log(req)
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ token: req.body.token }));
+const config = {
+    headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+}
+
+app.post('/api/auth', (request, response) => {
+    const {token} = request.body;
+    const url = process.env.CONTACTS_URL
+    const arr = {
+        token
+    }
+    axios.get(url, arr, config)
+    .then(res => {
+        console.log(res)
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ message: Success }));
+    })
+    .catch(err => {
+        response.send(500, {message: 'Unable to authenticate!'})
+    })
+
 });
 
 app.post('/api/contact', (request, response) => {
