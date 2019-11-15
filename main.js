@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
+const moment = require('moment');
 require('dotenv').config();
 const port = process.env.PORT;
 
@@ -61,6 +62,30 @@ app.post('/api/contact', (request, response) => {
     .catch(err => {
         console.log(err)
         response.send(500, {Authenticated: false})
+    })
+});
+
+app.post('/api/invite', (request, response) => {
+    const {token, location_id, send_at, contact_id, campaign_id} = request.body;
+    const url = process.env.INVITES_URL;
+    const datetime = new Date();
+    const formatted = moment(datetime).format("YYYY-MM-DD" + " " + send_at)
+    const arr = {
+        token,
+        location_id,
+        contact_id,
+        campaign_id,
+        scheduled,
+        send_at: formatted
+    };
+    axios.post(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ status: "Success" }));
+    })
+    .catch(err => {
+        console.log(err.response.data)
+        response.send(500, {Message: "Invite failed to schedule"})
     })
 })
 
