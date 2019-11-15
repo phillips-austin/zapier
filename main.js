@@ -15,7 +15,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get('/api/auth', (req, res) => {
-    res.send(200, req)
+    console.log(req)
 });
 
 app.post('/api/contact', (request, response) => {
