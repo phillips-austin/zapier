@@ -60,7 +60,7 @@ app.post('/api/swell', (request, response) => {
     })
     .catch(err => {
         console.log(err)
-        response.send(500, {Message: "Oops something went wrong... Please make sure the ID's are correct"})
+        response.send(500, {error: err.response.data})
     })
 });
 
