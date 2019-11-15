@@ -46,6 +46,7 @@ app.post('/api/auth', (request, response) => {
 // Create Contact
 app.post('/api/swell', (request, response) => {
     console.log(request.body)
+    response.send(200)
     // const {token, phone, name, email, locations, campaign_id, send_at} = request.body;
     // const url = process.env.CONTACTS_URL;
     // const arr = {
