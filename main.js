@@ -22,6 +22,7 @@ const config = {
     }
 }
 
+// Token Auth
 app.post('/api/auth', (request, response) => {
     const {token} = request.body;
     const url = process.env.CONTACTS_URL
@@ -41,9 +42,9 @@ app.post('/api/auth', (request, response) => {
 
 });
 
+// Create Contact
 app.post('/api/contact', (request, response) => {
     console.log(request.body)
-    response.send(200, request.body)
 })
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
