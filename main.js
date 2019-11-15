@@ -25,7 +25,7 @@ const config = {
 // Token Auth
 app.post('/api/auth', (request, response) => {
     const {token} = request.body;
-    const url = process.env.CONTACTS_URL
+    const url = process.env.LOCATIONS_URL
     const arr = {
         params: {
             token
@@ -34,7 +34,7 @@ app.post('/api/auth', (request, response) => {
     axios.get(url, arr, config)
     .then(res => {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ Authenticated: true, token }));
+        response.end(JSON.stringify({ Authenticated: true }));
     })
     .catch(err => {
         response.send(500, {Authenticated: false})
@@ -44,7 +44,24 @@ app.post('/api/auth', (request, response) => {
 
 // Create Contact
 app.post('/api/contact', (request, response) => {
-    console.log(request.body)
+    const {token, phone, name, email, locations} = request.body;
+    const url = process.env.CONTACTS_URL;
+    const arr = {
+        token,
+        name,
+        email,
+        phone,
+        locations: {id: locations}
+    }
+    axios.post(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ id: res.data.id }));
+    })
+    .catch(err => {
+        console.log(err)
+        response.send(500, {Authenticated: false})
+    })
 })
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
