@@ -26,17 +26,17 @@ app.post('/api/auth', (request, response) => {
     const {token} = request.body;
     const url = process.env.CONTACTS_URL
     const arr = {
-        token
+        params: {
+            token
+        }
     }
     axios.get(url, arr, config)
     .then(res => {
-        console.log(res)
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ message: "Success" }));
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ Authenticated: true }));
     })
     .catch(err => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ message: "Failed" }));
+        res.send(500, {Authenticated: false})
     })
 
 });
