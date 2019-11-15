@@ -56,7 +56,7 @@ app.post('/api/contact', (request, response) => {
     axios.post(url, arr, config)
     .then(res => {
         response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ id: res.data.id }));
+        response.end(JSON.stringify({ id: res.data.id, locations_id: locations }));
     })
     .catch(err => {
         console.log(err)
