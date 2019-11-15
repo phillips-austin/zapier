@@ -19,7 +19,7 @@ app.get('*', (req, res) => {
     console.log("Made it")
 })
 
-app.get('/api/contact', (req, res) => {
+app.get('/api/authentication', (req, res) => {
     res.send(200, {message: 'Authenticated'})
 });
 
