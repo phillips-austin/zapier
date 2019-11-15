@@ -75,7 +75,7 @@ app.post('/api/invite', (request, response) => {
         location_id,
         contact_id,
         campaign_id,
-        scheduled,
+        scheduled: true,
         send_at: formatted
     };
     axios.post(url, arr, config)
