@@ -14,7 +14,7 @@ app.use((err, req, res, next) => {
     res.json(err);
 });
 
-app.get('/api/auth', (req, res) => {
+app.post('/api/auth', (req, res) => {
     console.log(req)
 });
 
