@@ -54,8 +54,7 @@ app.post('/api/campaigns', (request, response) => {
     }
     axios.get(url, arr, config)
     .then(res => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ data: res.data }));
+        console.log(res.data)
     })
 })
 
