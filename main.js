@@ -96,8 +96,7 @@ app.post('/api/swell', (request, response) => {
         sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
-        console.log(err.response.data)
-        response.send(500, {error: err.response.data})
+        console.log(err.response.data.errors)
     })
 });
 
@@ -121,6 +120,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
     })
     .catch(err => {
         console.log(err.response.data.errors)
+        response.send(500, {error: err.response.data})
     })
 }
 
