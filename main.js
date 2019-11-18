@@ -120,8 +120,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         response.end(JSON.stringify({ data: res.data }));
     })
     .catch(err => {
-        console.log(err.response.data.errors.email)
-        response.send(500, {error: err.response.data})
+        console.log(err.response.data.errors)
     })
 }
 
