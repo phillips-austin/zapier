@@ -24,7 +24,6 @@ const config = {
 }
 // Postman testing
 app.get('/api/test', (req, res) => {
-    getContact()
 })
 
 // Token Auth
@@ -136,14 +135,17 @@ getContact = (email, phone, token, locations, campaign_id, send_at, response) =>
 sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
     const url = process.env.INVITES_URL;
     const datetime = new Date();
-    const formatted = moment(datetime).format("YYYY-MM-DD" + " " + send_at)
+    const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:m");
+    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + sendAt);
+    const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:m")
+    const final = (formatted > mst ? formatted : nextDay);
     const arr = {
         token,
         location_id,
         contact_id,
         campaign_id,
         scheduled: true,
-        send_at: formatted
+        send_at: final
     };
     axios.post(url, arr, config)
     .then(res => {
