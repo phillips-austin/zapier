@@ -136,7 +136,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
     const url = process.env.INVITES_URL;
     const datetime = new Date();
     const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:m");
-    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + sendAt);
+    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + send_at);
     const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:m")
     const final = (formatted > mst ? formatted : nextDay);
     const arr = {
