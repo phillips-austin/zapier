@@ -25,21 +25,22 @@ const config = {
 
 // Token Auth
 app.post('/api/auth', (request, response) => {
-    const {token} = request.body;
-    const url = process.env.LOCATIONS_URL
-    const arr = {
-        params: {
-            token
-        }
-    }
-    axios.get(url, arr, config)
-    .then(res => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify(res.data.data));
-    })
-    .catch(err => {
-        response.send(500, {Authenticated: false})
-    })
+    console.log(request)
+    // const {token} = request.body;
+    // const url = process.env.LOCATIONS_URL
+    // const arr = {
+    //     params: {
+    //         token
+    //     }
+    // }
+    // axios.get(url, arr, config)
+    // .then(res => {
+    //     response.setHeader('Content-Type', 'application/json');
+    //     response.end(JSON.stringify(res.data.data));
+    // })
+    // .catch(err => {
+    //     response.send(500, {Authenticated: false})
+    // })
 
 });
 
