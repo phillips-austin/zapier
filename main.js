@@ -98,6 +98,8 @@ app.post('/api/swell', (request, response) => {
     .catch(err => {
         if (err.response.data.errors.email){
             console.log("Made it here.")
+        } else if (err.response.data.errors.phone) {
+            console.log("Made it here.")
         } else {
             console.log("Wrong one")
         }
