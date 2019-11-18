@@ -44,9 +44,29 @@ app.get('/api/auth', (request, response) => {
 
 });
 
+// Get all locations
+app.get('/api/locations', (request, response) => {
+    const {token} = request.query;
+    const url = process.env.LOCATIONS_URL
+    const arr = {
+        params: {
+            token
+        }
+    }
+    axios.get(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify(res.data.data));
+    })
+    .catch(err => {
+        response.send(500, {Authenticated: false})
+    })
+
+});
+
 // Get all campaigns
-app.post('/api/campaigns', (request, response) => {
-    const {token} = request.body;
+app.get('/api/campaigns', (request, response) => {
+    const {token} = request.query;
     const url = process.env.CAMPAIGNS_URL;
     const arr = {
         params: {
