@@ -25,7 +25,8 @@ const config = {
 
 // Token Auth
 app.get('/api/auth', (request, response) => {
-    console.log(request)
+    const {token} = request.query;
+    console.log(token)
     // const {token} = request.body;
     // const url = process.env.LOCATIONS_URL
     // const arr = {
