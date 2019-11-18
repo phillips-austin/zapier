@@ -96,11 +96,7 @@ app.post('/api/swell', (request, response) => {
         sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
-        if (err.response.data.errors.email){
-            console.log("Made it here.")
-        } else {
-            console.log("Wrong one")
-        }
+        console.log(err)
     })
 });
 
