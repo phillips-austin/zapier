@@ -22,6 +22,10 @@ const config = {
         "Accept": "application/json",
     }
 }
+// Postman testing
+app.get('/api/test', (req, res) => {
+    getContact()
+})
 
 // Token Auth
 app.get('/api/auth', (request, response) => {
@@ -97,14 +101,36 @@ app.post('/api/swell', (request, response) => {
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            console.log("Made it here.")
+            getContact(email, phone, token, locations, campaign_id, send_at, response)
         } else if (err.response.data.errors.phone) {
-            console.log("Made it here.")
+            getContact(email, phone, token, locations, campaign_id, send_at, response)
         } else {
-            console.log("Wrong one")
+            console.log(err.response.data.errors)
+            response.send(500, {error: err.response.data})
         }
     })
 });
+
+// Get existing contact
+getContact = (email, phone, token, locations, campaign_id, send_at, response) => {
+    const url = process.env.CONTACTS_URL;
+    const arr = {
+        params: {
+            token,
+            email,
+            phone
+        }
+    }
+    axios.get(url, arr, config)
+    .then(res => {
+        const {id} = res.data.data[0];
+        sendInvite(id, token, locations, campaign_id, send_at, response)
+    })
+    .catch(err => {
+        console.log(err.response.data.errors)
+        response.send(500, {error: err.response.data.errors})
+    })
+}
 
 // Create Invite
 sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
