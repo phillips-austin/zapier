@@ -96,10 +96,7 @@ app.post('/api/swell', (request, response) => {
         sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
-        if (err.response.data.error.email === 'The email has already been taken.') {
-            console.log('Made it here')
-        }
-        console.log("Wrong one")
+        console.log(err.response.data.errors.email)
     })
 });
 
