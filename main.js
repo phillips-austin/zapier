@@ -81,6 +81,10 @@ app.get('/api/campaigns', (request, response) => {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify(res.data.data));
     })
+    .catch(err => {
+        console.log(err);
+        response.send(500, {error: err})
+    })
 })
 
 // Create Contact
@@ -104,8 +108,8 @@ app.post('/api/swell', (request, response) => {
         } else if (err.response.data.errors.phone) {
             getContact(email, phone, token, locations, campaign_id, send_at, response)
         } else {
-            console.log(err.response.data.errors)
-            response.send(500, {error: err.response.data})
+            console.log(err);
+            response.send(500, {error: err})
         }
     })
 });
@@ -126,8 +130,8 @@ getContact = (email, phone, token, locations, campaign_id, send_at, response) =>
         sendInvite(id, token, locations, campaign_id, send_at, response)
     })
     .catch(err => {
-        console.log(err.response.data.errors)
-        response.send(500, {error: err.response.data.errors})
+        console.log(err);
+        response.send(500, {error: err})
     })
 }
 
@@ -153,8 +157,8 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         response.end(JSON.stringify({ data: res.data }));
     })
     .catch(err => {
-        console.log(err.response.data.errors)
-        response.send(500, {error: err.response.data})
+        console.log(err);
+        response.send(500, {error: err})
     })
 }
 
