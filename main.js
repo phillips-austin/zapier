@@ -29,11 +29,7 @@ app.get('/api/test', (req, res) => {
     const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + "12:30");
     const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
     const final = () => {
-        if (formatted > mst) {
-            return formatted;
-        } else if (formatted < mst) {
-            return nextDay;
-        }
+        return (moment(mst).format("H:mm"))
     }
     console.log(final())
 })
@@ -169,15 +165,16 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         scheduled: true,
         send_at: final()
     };
-    axios.post(url, arr, config)
-    .then(res => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ data: res.data }));
-    })
-    .catch(err => {
-        console.log(err);
-        response.send(500, {error: err})
-    })
+    console.log(datetime)
+    // axios.post(url, arr, config)
+    // .then(res => {
+    //     response.setHeader('Content-Type', 'application/json');
+    //     response.end(JSON.stringify({ data: res.data }));
+    // })
+    // .catch(err => {
+    //     console.log(err);
+    //     response.send(500, {error: err})
+    // })
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
