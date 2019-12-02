@@ -24,6 +24,14 @@ const config = {
 }
 // Postman testing
 app.get('/api/test', (req, res) => {
+    const datetime = new Date();
+    const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:mm");
+    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + "19:30");
+    const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
+    const final = () => {
+        return
+    }
+    console.log(final())
 })
 
 // Token Auth
@@ -151,15 +159,16 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         scheduled: formatted > mst ? nextDay : formatted,
         send_at: final
     };
-    axios.post(url, arr, config)
-    .then(res => {
-        response.setHeader('Content-Type', 'application/json');
-        response.end(JSON.stringify({ data: res.data }));
-    })
-    .catch(err => {
-        console.log(err);
-        response.send(500, {error: err})
-    })
+    console.log(send_at)
+    // axios.post(url, arr, config)
+    // .then(res => {
+    //     response.setHeader('Content-Type', 'application/json');
+    //     response.end(JSON.stringify({ data: res.data }));
+    // })
+    // .catch(err => {
+    //     console.log(err);
+    //     response.send(500, {error: err})
+    // })
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
