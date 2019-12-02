@@ -165,7 +165,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         scheduled: true,
         send_at: final()
     };
-    console.log("Time:", mst)
+    console.log(final())
     // axios.post(url, arr, config)
     // .then(res => {
     //     response.setHeader('Content-Type', 'application/json');
