@@ -26,10 +26,14 @@ const config = {
 app.get('/api/test', (req, res) => {
     const datetime = new Date();
     const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:mm");
-    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + "19:30");
+    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + "12:30");
     const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
     const final = () => {
-        return
+        if (formatted > mst) {
+            return formatted;
+        } else if (formatted < mst) {
+            return nextDay;
+        }
     }
     console.log(final())
 })
@@ -150,25 +154,30 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
     const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:mm");
     const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + send_at);
     const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
-    const final = formatted > mst ? formatted : nextDay;
+    const final = () => {
+        if (formatted > mst) {
+            return formatted;
+        } else if (formatted < mst) {
+            return nextDay;
+        }
+    }
     const arr = {
         token,
         location_id,
         contact_id,
         campaign_id,
-        scheduled: formatted > mst ? nextDay : formatted,
-        send_at: final
+        scheduled: true,
+        send_at: final()
     };
-    console.log(typeof send_at)
-    // axios.post(url, arr, config)
-    // .then(res => {
-    //     response.setHeader('Content-Type', 'application/json');
-    //     response.end(JSON.stringify({ data: res.data }));
-    // })
-    // .catch(err => {
-    //     console.log(err);
-    //     response.send(500, {error: err})
-    // })
+    axios.post(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ data: res.data }));
+    })
+    .catch(err => {
+        console.log(err);
+        response.send(500, {error: err})
+    })
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
