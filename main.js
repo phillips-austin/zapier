@@ -166,15 +166,15 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         send_at: final()
     };
     console.log(final())
-    // axios.post(url, arr, config)
-    // .then(res => {
-    //     response.setHeader('Content-Type', 'application/json');
-    //     response.end(JSON.stringify({ data: res.data }));
-    // })
-    // .catch(err => {
-    //     console.log(err);
-    //     response.send(500, {error: err})
-    // })
+    axios.post(url, arr, config)
+    .then(res => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify({ data: res.data }));
+    })
+    .catch(err => {
+        console.log(err);
+        response.send(500, {error: err})
+    })
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
