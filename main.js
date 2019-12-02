@@ -159,7 +159,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         scheduled: formatted > mst ? nextDay : formatted,
         send_at: final
     };
-    console.log(send_at)
+    console.log(typeof send_at)
     // axios.post(url, arr, config)
     // .then(res => {
     //     response.setHeader('Content-Type', 'application/json');
