@@ -89,7 +89,7 @@ app.get('/api/campaigns', (request, response) => {
 
 // Create Contact
 app.post('/api/swell', (request, response) => {
-    const {token, phone, name, email, locations, campaign_id, send_at} = request.body;
+    const {token, phone, name, email, locations, campaign_id} = request.body;
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
@@ -100,13 +100,13 @@ app.post('/api/swell', (request, response) => {
     }
     axios.post(url, arr, config)
     .then(res => {
-        sendInvite(res.data.id, token, locations, campaign_id, send_at, response)
+        sendInvite(res.data.id, token, locations, campaign_id, response)
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContact(email, phone, token, locations, campaign_id, send_at, response)
+            getContact(email, phone, token, locations, campaign_id, response)
         } else if (err.response.data.errors.phone) {
-            getContact(email, phone, token, locations, campaign_id, send_at, response)
+            getContact(email, phone, token, locations, campaign_id, response)
         } else {
             console.log(err);
             response.send(500, {error: err})
@@ -115,7 +115,7 @@ app.post('/api/swell', (request, response) => {
 });
 
 // Get existing contact
-getContact = (email, phone, token, locations, campaign_id, send_at, response) => {
+getContact = (email, phone, token, locations, campaign_id, response) => {
     const url = process.env.CONTACTS_URL;
     const arr = {
         params: {
@@ -127,7 +127,7 @@ getContact = (email, phone, token, locations, campaign_id, send_at, response) =>
     axios.get(url, arr, config)
     .then(res => {
         const {id} = res.data.data[0];
-        sendInvite(id, token, locations, campaign_id, send_at, response)
+        sendInvite(id, token, locations, campaign_id, response)
     })
     .catch(err => {
         console.log(err);
@@ -136,7 +136,7 @@ getContact = (email, phone, token, locations, campaign_id, send_at, response) =>
 }
 
 // Create Invite
-sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
+sendInvite = (contact_id, token, location_id, campaign_id, response) => {
     const url = process.env.INVITES_URL;
     const arr = {
         token,
@@ -145,7 +145,6 @@ sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) =>
         campaign_id,
         scheduled: false
     };
-    console.log(final())
     axios.post(url, arr, config)
     .then(res => {
         response.setHeader('Content-Type', 'application/json');
