@@ -24,14 +24,6 @@ const config = {
 }
 // Postman testing
 app.get('/api/test', (req, res) => {
-    const datetime = new Date();
-    const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:mm");
-    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + "12:30");
-    const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
-    const final = () => {
-        return (moment(mst).format("H:mm"))
-    }
-    console.log(final())
 })
 
 // Token Auth
@@ -146,24 +138,12 @@ getContact = (email, phone, token, locations, campaign_id, send_at, response) =>
 // Create Invite
 sendInvite = (contact_id, token, location_id, campaign_id, send_at, response) => {
     const url = process.env.INVITES_URL;
-    const datetime = new Date();
-    const mst = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD H:mm");
-    const formatted = moment.parseZone(datetime).utc(-7).format("YYYY-MM-DD" + " " + send_at);
-    const nextDay = moment.parseZone(formatted).add(1, 'd').utc(-7).format("YYYY-MM-DD H:mm");
-    const final = () => {
-        if (formatted > mst) {
-            return formatted;
-        } else if (formatted < mst) {
-            return nextDay;
-        }
-    }
     const arr = {
         token,
         location_id,
         contact_id,
         campaign_id,
-        scheduled: true,
-        send_at: final()
+        scheduled: false
     };
     console.log(final())
     axios.post(url, arr, config)
