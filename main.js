@@ -153,6 +153,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, response) => {
     .catch(err => {
         if (err.response.data.contact_id) {
             console.log(err.response.data.message)
+            response.send(200, {message: err.response.data.message})
         } else {
             console.log(err);
             response.send(500, {error: err})
