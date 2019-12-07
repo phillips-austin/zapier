@@ -42,7 +42,7 @@ app.get('/api/auth', (request, response) => {
         response.end(JSON.stringify(firstLocation));
     })
     .catch(err => {
-        response.send(500, {Authenticated: false})
+        response.status(500)({Authenticated: false})
     })
 
 });
@@ -62,7 +62,7 @@ app.get('/api/locations', (request, response) => {
         response.end(JSON.stringify(res.data.data));
     })
     .catch(err => {
-        response.send(500, {Authenticated: false})
+        response.status(500).send({Authenticated: false})
     })
 
 });
@@ -83,7 +83,7 @@ app.get('/api/campaigns', (request, response) => {
     })
     .catch(err => {
         console.log(err);
-        response.send(500, {error: err})
+        response.status(500).send({error: err})
     })
 })
 
@@ -153,10 +153,10 @@ sendInvite = (contact_id, token, location_id, campaign_id, response) => {
     .catch(err => {
         if (err.response.data.contact_id) {
             console.log(err.response.data.message)
-            response.send(200, {message: err.response.data.message})
+            response.status(200).send({message: err.response.data.message})
         } else {
             console.log(err);
-            response.send(500, {error: err})
+            response.status(500)({error: err})
         }
     })
 }
