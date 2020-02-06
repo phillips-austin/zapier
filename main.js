@@ -25,7 +25,7 @@ const config = {
 // Postman testing
 app.post('/api/test', (request, res) => {
     const {token, phone, name, email, locations, campaign_id, send_at } = request.body;
-    console.log(send_at);
+    console.log(moment(send_at).format("YYYY-MM-DD H:i"));
 })
 
 // Token Auth
