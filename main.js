@@ -24,6 +24,8 @@ const config = {
 }
 // Postman testing
 app.get('/api/test', (req, res) => {
+    const {token, phone, name, email, locations, campaign_id} = request.body;
+    console.log(request.body);
 })
 
 // Token Auth
