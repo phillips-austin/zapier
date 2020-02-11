@@ -34,8 +34,8 @@ app.post('/api/test', (request, res) => {
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const minute = Number(timeConverted[1]);
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`
-    var utTime = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
-    const now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    var utTime = new Date(scheduleDate).getTime();
+    const now = new Date().getTime();
     console.log(new Date(utTime).getTime() > new Date(now))
     console.log(moment(scheduleDate).format('YYYY-MM-DD H:mm'))
 
