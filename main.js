@@ -33,11 +33,13 @@ app.post('/api/test', (request, res) => {
     const hour = Number(timeConverted[0])
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const minute = Number(timeConverted[1]);
-    const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`
+    const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
+    const formattedDate = moment(date).format("YYYY-MM-DD");
+    const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
     var utTime = new Date(scheduleDate).getTime();
     const now = new Date().getTime();
-    console.log(new Date(utTime).getTime() > new Date(now))
-    console.log(moment(scheduleDate).format('YYYY-MM-DD H:mm'))
+    console.log(utTime > now)
+    console.log(finalDate)
 
     res.sendStatus(200)
 })
