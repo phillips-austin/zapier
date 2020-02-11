@@ -39,7 +39,9 @@ app.post('/api/test', (request, res) => {
     var utTime = new Date(scheduleDate).getTime();
     const now = new Date().getTime();
     console.log(utTime > now)
-    console.log(finalDate)
+    console.log("time: ", time)
+    console.log("hourCOnverted: ", hourConverted)
+    console.log("minute: ", minute)
 
     res.sendStatus(200)
 })
