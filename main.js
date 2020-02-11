@@ -24,8 +24,22 @@ const config = {
 }
 // Postman testing
 app.post('/api/test', (request, res) => {
-    const {token, phone, name, email, locations, campaign_id, send_at } = request.body;
-    console.log(moment(send_at).format("YYYY-MM-DD H:i"));
+    const {how, date, time, ampm} = request.body;
+    const dateConverted = new Date(date)
+    const timeConverted = time.split(':')
+    const year = dateConverted.getFullYear()
+    const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
+    const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
+    const hour = Number(timeConverted[0])
+    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    const minute = Number(timeConverted[1]);
+    const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`
+    var utTime = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
+    const now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    console.log(new Date(utTime).getTime() > new Date(now))
+    console.log(moment(scheduleDate).format('YYYY-MM-DD H:mm'))
+
+    res.sendStatus(200)
 })
 
 // Token Auth
@@ -91,7 +105,7 @@ app.get('/api/campaigns', (request, response) => {
 
 // Create Contact
 app.post('/api/swell', (request, response) => {
-    const {token, phone, name, email, locations, campaign_id} = request.body;
+    const {token, phone, name, email, locations, campaign_id, how, date, time} = request.body;
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
@@ -102,13 +116,17 @@ app.post('/api/swell', (request, response) => {
     }
     axios.post(url, arr, config)
     .then(res => {
-        sendInvite(res.data.id, token, locations, campaign_id, response)
+        if (how === 'Instant') {
+            return sendInvite(res.data.id, token, locations, campaign_id, response)
+        } else {
+            return sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, time, response)
+        }
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContact(email, phone, token, locations, campaign_id, response)
+            getContact(email, phone, token, locations, campaign_id, how, date, time, response)
         } else if (err.response.data.errors.phone) {
-            getContact(email, phone, token, locations, campaign_id, response)
+            getContact(email, phone, token, locations, campaign_id, how, date, time, response)
         } else {
             console.log(err);
             response.send(500, {error: err})
@@ -117,7 +135,7 @@ app.post('/api/swell', (request, response) => {
 });
 
 // Get existing contact
-getContact = (email, phone, token, locations, campaign_id, response) => {
+getContact = (email, phone, token, locations, campaign_id, how, date, time, response) => {
     const url = process.env.CONTACTS_URL;
     const arr = {
         params: {
@@ -129,7 +147,11 @@ getContact = (email, phone, token, locations, campaign_id, response) => {
     axios.get(url, arr, config)
     .then(res => {
         const {id} = res.data.data[0];
-        sendInvite(id, token, locations, campaign_id, response)
+        if (how === 'Instant') {
+            return sendInvite(id, token, locations, campaign_id, response)
+        } else {
+            return sendInviteScheduled(id, token, locations, campaign_id, how, date, time, response)
+        }
     })
     .catch(err => {
         console.log(err);
@@ -161,6 +183,22 @@ sendInvite = (contact_id, token, location_id, campaign_id, response) => {
             response.status(500)({error: err})
         }
     })
+}
+
+sendInviteScheduled = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
+    if (date) {
+        return scheduleInvite(contact_id, token, location_id, campaign_id, how, date, time, response)
+    } else {
+        return sendTodayAtTime(contact_id, token, location_id, campaign_id, how, date, time, response)
+    }
+}
+
+scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
+    return null
+}
+
+sendTodayAtTime = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
+return null
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
