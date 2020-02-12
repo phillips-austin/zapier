@@ -249,10 +249,11 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     if (scheduleDateFormatted < now) {
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+        now = new Date(now);
         var nextDay = new Date(now)
         nextDay.setDate(now.getDate() + 1)
         const url = process.env.INVITES_URL;
-        const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
+        const tommorow = moment(nextDay).format('YYYY-MM-DD');
         const arr = {
             token,
             location_id,
