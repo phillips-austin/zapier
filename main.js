@@ -284,10 +284,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
         const dateConverted = new Date(date)
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-        const thisYear = new Date(now).getFullYear().toLocaleString();
-        const thisMonth = new Date(now).getMonth().toLocaleString();
-        const thisDay =  new Date(now).getUTCDate().toLocaleString()
-        const today = `${thisYear}-${thisMonth}-${thisDay} ${hourConverted}:${minute}`;
+        const today = `${moment(now).format("YYYY-MM-DD")} ${hourConverted}:${minute}`;
         const arr = {
             token,
             location_id,
