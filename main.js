@@ -250,7 +250,8 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
 
     return (
         console.log(now),
-        console.log(scheduleDateFormatted)
+        console.log(scheduleDate),
+        console.log(new Date(scheduleDate))
     )
 
     // if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
