@@ -29,12 +29,15 @@ app.post('/api/test', (request, res) => {
     const year = dateConverted.getFullYear()
     const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
+    const hourToNum = Number(hour);
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
     const formattedDate = moment(date).format("YYYY-MM-DD");
     const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
     const now = new Date().getTime();
-console.log(request.body)
+
+    console.log(typeof hour)
+    console.log(typeof hourToNum)
 
     res.sendStatus(200)
 })
