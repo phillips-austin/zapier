@@ -43,7 +43,7 @@ app.post('/api/test', (request, res) => {
     console.log(`${year}-${month}-${day} ${hourConverted}:${minute}`)
 
     // today at a time
-    console.log(`${thisYear}-${thisMonth}-${thisDay} ${hourConverted}:${minute}`)
+    console.log(moment(now).format("YYYY-MM-DD") + ` ${hourConverted}:${minute}`)
 
     res.sendStatus(200)
 })
