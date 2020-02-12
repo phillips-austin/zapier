@@ -244,7 +244,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     const thisYear = new Date(now).getFullYear()
     const thisMonth = new Date(now).getMonth()
-    const thisDay =  new Date(now).getUTCDate()
+    const thisDay =  new Date(now).getUTCDate().toLocaleString()
     const scheduleDate = `${thisYear}-${thisMonth}-${thisDay}T${hourConverted}:${minute}:00-0700`;
     const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
 
