@@ -24,34 +24,6 @@ const config = {
 }
 // Postman testing
 app.post('/api/test', (request, res) => {
-    const {how, date, hour, minute, ampm} = request.body;
-    const dateConverted = new Date(date)
-    const year = dateConverted.getFullYear()
-    const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
-    const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
-    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-    const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
-    function addZero(n){
-        if (n <= 9) {
-            return '0' + n
-        }
-          return n
-    }
-    var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    now = new Date(now)
-    now = new Date(now);
-    var nextDay = new Date(now)
-    nextDay.setDate(now.getDate() + 1)
-    const tomorrow = new Date(nextDay)
-    const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
-
-
-
-    console.log(tomorrowFormatted)
-    // scheduled for a date at a time
-    // console.log(`${year}-${month}-${day} ${hourConverted}:${minute}`)
-
-    // today at a time
 })
 
 // Token Auth
