@@ -296,7 +296,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             scheduled: true,
             send_at: today
         };
-        return console.log("Below")
+        return console.log(today)
         // return(
         //     axios.post(url, arr, config)
         //     .then(res => {
