@@ -24,23 +24,19 @@ const config = {
 }
 // Postman testing
 app.post('/api/test', (request, res) => {
-    const {how, date, time, ampm} = request.body;
+    const {how, date, hour, minute, ampm} = request.body;
     const dateConverted = new Date(date)
-    const timeConverted = time.split(':')
     const year = dateConverted.getFullYear()
     const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
-    const hour = Number(timeConverted[0])
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-    const minute = Number(timeConverted[1]);
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
     const formattedDate = moment(date).format("YYYY-MM-DD");
     const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
-    var utTime = new Date(scheduleDate).getTime();
     const now = new Date().getTime();
-    var usaTime = new Date(time).toLocaleString("en-US", {timeZone: "America/New_York"});
     console.log(utTime > now)
-    console.log(new Date(usaTime).toLocaleTimeString())
+    console.log(hourConverted);
+    console.log(minute)
 
     res.sendStatus(200)
 })
