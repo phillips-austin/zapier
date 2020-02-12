@@ -33,9 +33,7 @@ app.post('/api/test', (request, res) => {
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
     const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    console.log(scheduleDateFormatted);
-    console.log(now);
-    console.log(scheduleDateFormatted < now)
+    console.log(dateConverted.setDate() + 1)
 
     res.sendStatus(200)
 })
