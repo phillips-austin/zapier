@@ -262,22 +262,23 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             scheduled: true,
             send_at: tommorow
         };
-        return(
-            axios.post(url, arr, config)
-            .then(res => {
-                response.setHeader('Content-Type', 'application/json');
-                response.end(JSON.stringify({ data: res.data }));
-            })
-            .catch(err => {
-                if (err.response.data.contact_id) {
-                    console.log(err.response.data.message)
-                    response.status(200).send({message: err.response.data.message})
-                } else {
-                    console.log(err);
-                    response.status(500)({error: err})
-                }
-            })
-        )
+        return console.log('Here')
+        // return(
+        //     axios.post(url, arr, config)
+        //     .then(res => {
+        //         response.setHeader('Content-Type', 'application/json');
+        //         response.end(JSON.stringify({ data: res.data }));
+        //     })
+        //     .catch(err => {
+        //         if (err.response.data.contact_id) {
+        //             console.log(err.response.data.message)
+        //             response.status(200).send({message: err.response.data.message})
+        //         } else {
+        //             console.log(err);
+        //             response.status(500)({error: err})
+        //         }
+        //     })
+        // )
     } else {
         const url = process.env.INVITES_URL;
         const dateConverted = new Date(date)
