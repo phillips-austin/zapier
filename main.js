@@ -38,8 +38,9 @@ app.post('/api/test', (request, res) => {
     const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
     var utTime = new Date(scheduleDate).getTime();
     const now = new Date().getTime();
+    var usaTime = new Date(time).toLocaleString("en-US", {timeZone: "America/New_York"});
     console.log(utTime > now)
-    console.log(new Date(time).toLocaleTimeString())
+    console.log(new Date(usaTime).toLocaleTimeString())
 
     res.sendStatus(200)
 })
