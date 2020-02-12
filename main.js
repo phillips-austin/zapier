@@ -51,7 +51,6 @@ app.post('/api/test', (request, res) => {
         return console.log("No Date")
     }
 
-    res.sendStatus(200)
 })
 
 // Token Auth
@@ -117,7 +116,7 @@ app.get('/api/campaigns', (request, response) => {
 
 // Create Contact
 app.post('/api/swell', (request, response) => {
-    const {token, phone, name, email, locations, campaign_id, how, date, time} = request.body;
+    const {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
@@ -131,14 +130,14 @@ app.post('/api/swell', (request, response) => {
         if (how === 'Instant') {
             return sendInvite(res.data.id, token, locations, campaign_id, response)
         } else {
-            return sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, time, response)
+            return sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         }
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContact(email, phone, token, locations, campaign_id, how, date, time, response)
+            getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else if (err.response.data.errors.phone) {
-            getContact(email, phone, token, locations, campaign_id, how, date, time, response)
+            getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else {
             console.log(err);
             response.send(500, {error: err})
@@ -147,7 +146,7 @@ app.post('/api/swell', (request, response) => {
 });
 
 // Get existing contact
-getContact = (email, phone, token, locations, campaign_id, how, date, time, response) => {
+getContact = (email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response) => {
     const url = process.env.CONTACTS_URL;
     const arr = {
         params: {
@@ -162,7 +161,7 @@ getContact = (email, phone, token, locations, campaign_id, how, date, time, resp
         if (how === 'Instant') {
             return sendInvite(id, token, locations, campaign_id, response)
         } else {
-            return sendInviteScheduled(id, token, locations, campaign_id, how, date, time, response)
+            return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         }
     })
     .catch(err => {
@@ -197,20 +196,123 @@ sendInvite = (contact_id, token, location_id, campaign_id, response) => {
     })
 }
 
-sendInviteScheduled = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
+sendInviteScheduled = (contact_id, token, location_id, campaign_id, how, date, hour, minute, ampm, response) => {
     if (date) {
-        return scheduleInvite(contact_id, token, location_id, campaign_id, how, date, time, response)
+        return scheduleInvite(contact_id, token, location_id, campaign_id, how, date, hour, minute, ampm, response)
     } else {
-        return sendTodayAtTime(contact_id, token, location_id, campaign_id, how, date, time, response)
+        return sendTodayAtTime(contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response)
     }
 }
 
-scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
-    return null
+scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, minute, ampm, response) => {
+    const url = process.env.INVITES_URL;
+    const dateConverted = new Date(date)
+    const year = dateConverted.getFullYear()
+    const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
+    const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
+    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
+    const arr = {
+        token,
+        location_id,
+        contact_id,
+        campaign_id,
+        scheduled: true,
+        send_at: scheduleDate
+    };
+    return (
+        axios.post(url, arr, config)
+        .then(res => {
+            response.setHeader('Content-Type', 'application/json');
+            response.end(JSON.stringify({ data: res.data }));
+        })
+        .catch(err => {
+            if (err.response.data.contact_id) {
+                console.log(err.response.data.message)
+                response.status(200).send({message: err.response.data.message})
+            } else {
+                console.log(err);
+                response.status(500)({error: err})
+            }
+        })
+    )
 }
 
-sendTodayAtTime = (contact_id, token, location_id, campaign_id, how, date, time, response) => {
-return null
+sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
+    const dateConverted = new Date(date)
+    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    const thisYear = new Date(now).getFullYear().toLocaleString();
+    const thisMonth = new Date(now).getMonth().toLocaleString();
+    const thisDay =  new Date(now).getUTCDate().toLocaleString()
+    const scheduleDate = `${thisYear}-${thisMonth}-${thisDay}T${hourConverted}:${minute}:00-0700`;
+    const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
+
+    if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
+        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+        var nextDay = new Date(dateConverted)
+        nextDay.setDate(dateConverted.getDate() + 1)
+        const url = process.env.INVITES_URL;
+        const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
+        const arr = {
+            token,
+            location_id,
+            contact_id,
+            campaign_id,
+            scheduled: true,
+            send_at: tommorow
+        };
+        return(
+            axios.post(url, arr, config)
+            .then(res => {
+                response.setHeader('Content-Type', 'application/json');
+                response.end(JSON.stringify({ data: res.data }));
+            })
+            .catch(err => {
+                if (err.response.data.contact_id) {
+                    console.log(err.response.data.message)
+                    response.status(200).send({message: err.response.data.message})
+                } else {
+                    console.log(err);
+                    response.status(500)({error: err})
+                }
+            })
+        )
+    } else {
+        const url = process.env.INVITES_URL;
+        const dateConverted = new Date(date)
+        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+        var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+        const thisYear = new Date(now).getFullYear().toLocaleString();
+        const thisMonth = new Date(now).getMonth().toLocaleString();
+        const thisDay =  new Date(now).getUTCDate().toLocaleString()
+        const today = `${thisYear}-${thisMonth}-${thisDay} ${hourConverted}:${minute}`;
+        const arr = {
+            token,
+            location_id,
+            contact_id,
+            campaign_id,
+            scheduled: true,
+            send_at: today
+        };
+        return(
+            axios.post(url, arr, config)
+            .then(res => {
+                response.setHeader('Content-Type', 'application/json');
+                response.end(JSON.stringify({ data: res.data }));
+            })
+            .catch(err => {
+                if (err.response.data.contact_id) {
+                    console.log(err.response.data.message)
+                    response.status(200).send({message: err.response.data.message})
+                } else {
+                    console.log(err);
+                    response.status(500)({error: err})
+                }
+            })
+        )
+    }
+
 }
 
 app.listen(port, () => console.log(`Listening On Port ${port}`));
