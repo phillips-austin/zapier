@@ -35,12 +35,15 @@ app.post('/api/test', (request, res) => {
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     var nextDay = new Date(dateConverted)
     nextDay.setDate(dateConverted.getDate() + 1)
+    const thisYear = new Date(now).getFullYear().toLocaleString();
+    const thisMonth = new Date(now).getMonth().toLocaleString();
+    const thisDay =  new Date(now).getUTCDate().toLocaleString()
 
     // scheduled for a date at a time
     console.log(`${year}-${month}-${day} ${hourConverted}:${minute}`)
 
     // today at a time
-    console.log(`${new Date(now).toLocaleDateString()} ${hourConverted}:${minute}`)
+    console.log(`${thisYear}-${thisMonth}-${thisDay} ${hourConverted}:${minute}`)
 
     res.sendStatus(200)
 })
