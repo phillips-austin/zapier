@@ -249,9 +249,8 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
 
     return (
-        console.log(thisYear),
-        console.log(thisMonth),
-        console.log(thisDay)
+        console.log(now),
+        console.log(scheduleDateFormatted)
     )
 
     // if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
