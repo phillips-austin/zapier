@@ -31,26 +31,27 @@ app.post('/api/test', (request, res) => {
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
-    const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
+    function addZero(n){
+        if (n <= 9) {
+            return '0' + n
+        }
+          return n
+    }
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    var nextDay = new Date(dateConverted)
-    nextDay.setDate(dateConverted.getDate() + 1)
-    const thisYear = new Date(now).getFullYear().toLocaleString();
-    const thisMonth = new Date(now).getMonth().toLocaleString();
-    const thisDay =  new Date(now).getUTCDate().toLocaleString()
+    now = new Date(now)
+    now = new Date(now);
+    var nextDay = new Date(now)
+    nextDay.setDate(now.getDate() + 1)
+    const tomorrow = new Date(nextDay)
+    const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
 
+
+
+    console.log(tomorrowFormatted)
     // scheduled for a date at a time
-    console.log(`${year}-${month}-${day} ${hourConverted}:${minute}`)
+    // console.log(`${year}-${month}-${day} ${hourConverted}:${minute}`)
 
     // today at a time
-    console.log(moment(now).format("YYYY-MM-DD") + ` ${hourConverted}:${minute}`)
-
-    if (date) {
-        return console.log(date)
-    } else {
-        return console.log("No Date")
-    }
-
 })
 
 // Token Auth
@@ -241,58 +242,73 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
 sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
     const dateConverted = new Date(date)
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    function addZero(n){
+        if (n <= 9) {
+            return '0' + n
+        }
+          return n
+    }
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    now = new Date(now);
-    const todayConverted = moment(now).format("YYYY-MM-DD")
-    const scheduleDate = `${todayConverted}T${hourConverted}:${minute}:00-0700`;
-    const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
+    now = new Date(now)
+    const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted + ':' + minute;
 
-    if (scheduleDateFormatted < now) {
-        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    if (new Date(now).getTime() > new Date(todayScheduled).getTime()) {
+        const url = process.env.INVITES_URL;
+        function addZero(n){
+            if (n <= 9) {
+                return '0' + n
+            }
+              return n
+        }
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
         now = new Date(now);
         var nextDay = new Date(now)
         nextDay.setDate(now.getDate() + 1)
-        const url = process.env.INVITES_URL;
-        const tommorow = moment(nextDay).format('YYYY-MM-DD');
+        const tomorrow = new Date(nextDay)
+        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
         const arr = {
             token,
             location_id,
             contact_id,
             campaign_id,
             scheduled: true,
-            send_at: tommorow
+            send_at: tomorrowFormatted
         };
-
-        return console.log(nextDay)
-        // return(
-        //     axios.post(url, arr, config)
-        //     .then(res => {
-        //         response.setHeader('Content-Type', 'application/json');
-        //         response.end(JSON.stringify({ data: res.data }));
-        //     })
-        //     .catch(err => {
-        //         if (err.response.data.contact_id) {
-        //             console.log(err.response.data.message)
-        //             response.status(200).send({message: err.response.data.message})
-        //         } else {
-        //             console.log(err);
-        //             response.status(500)({error: err})
-        //         }
-        //     })
-        // )
+        return(
+            axios.post(url, arr, config)
+            .then(res => {
+                response.setHeader('Content-Type', 'application/json');
+                response.end(JSON.stringify({ data: res.data }));
+            })
+            .catch(err => {
+                if (err.response.data.contact_id) {
+                    console.log(err.response.data.message)
+                    response.status(200).send({message: err.response.data.message})
+                } else {
+                    console.log(err);
+                    response.status(500)({error: err})
+                }
+            })
+        )
     } else {
         const url = process.env.INVITES_URL;
+        function addZero(n){
+            if (n <= 9) {
+                return '0' + n
+            }
+              return n
+        }
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-        const today = `${moment(now).format("YYYY-MM-DD")} ${hourConverted}:${minute}`;
+        now = new Date(now)
+        const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted + ':' + minute;
         const arr = {
             token,
             location_id,
             contact_id,
             campaign_id,
             scheduled: true,
-            send_at: today
+            send_at: todayScheduled
         };
         return(
             axios.post(url, arr, config)
