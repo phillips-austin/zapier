@@ -248,68 +248,73 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     const scheduleDate = `${thisYear}-${thisMonth}-${thisDay}T${hourConverted}:${minute}:00-0700`;
     const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
 
-    if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
-        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-        var nextDay = new Date(dateConverted)
-        nextDay.setDate(dateConverted.getDate() + 1)
-        const url = process.env.INVITES_URL;
-        const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
-        const arr = {
-            token,
-            location_id,
-            contact_id,
-            campaign_id,
-            scheduled: true,
-            send_at: tommorow
-        };
-        return console.log('Here')
-        // return(
-        //     axios.post(url, arr, config)
-        //     .then(res => {
-        //         response.setHeader('Content-Type', 'application/json');
-        //         response.end(JSON.stringify({ data: res.data }));
-        //     })
-        //     .catch(err => {
-        //         if (err.response.data.contact_id) {
-        //             console.log(err.response.data.message)
-        //             response.status(200).send({message: err.response.data.message})
-        //         } else {
-        //             console.log(err);
-        //             response.status(500)({error: err})
-        //         }
-        //     })
-        // )
-    } else {
-        const url = process.env.INVITES_URL;
-        const dateConverted = new Date(date)
-        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-        var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-        const today = `${moment(now).format("YYYY-MM-DD")} ${hourConverted}:${minute}`;
-        const arr = {
-            token,
-            location_id,
-            contact_id,
-            campaign_id,
-            scheduled: true,
-            send_at: today
-        };
-        return(
-            axios.post(url, arr, config)
-            .then(res => {
-                response.setHeader('Content-Type', 'application/json');
-                response.end(JSON.stringify({ data: res.data }));
-            })
-            .catch(err => {
-                if (err.response.data.contact_id) {
-                    console.log(err.response.data.message)
-                    response.status(200).send({message: err.response.data.message})
-                } else {
-                    console.log(err);
-                    response.status(500)({error: err})
-                }
-            })
-        )
-    }
+    return (
+        console.log(now),
+        console.log(scheduleDateFormatted),
+        console.log(scheduleDate)
+    )
+
+    // if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
+    //     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    //     var nextDay = new Date(dateConverted)
+    //     nextDay.setDate(dateConverted.getDate() + 1)
+    //     const url = process.env.INVITES_URL;
+    //     const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
+    //     const arr = {
+    //         token,
+    //         location_id,
+    //         contact_id,
+    //         campaign_id,
+    //         scheduled: true,
+    //         send_at: tommorow
+    //     };
+    //     return(
+    //         axios.post(url, arr, config)
+    //         .then(res => {
+    //             response.setHeader('Content-Type', 'application/json');
+    //             response.end(JSON.stringify({ data: res.data }));
+    //         })
+    //         .catch(err => {
+    //             if (err.response.data.contact_id) {
+    //                 console.log(err.response.data.message)
+    //                 response.status(200).send({message: err.response.data.message})
+    //             } else {
+    //                 console.log(err);
+    //                 response.status(500)({error: err})
+    //             }
+    //         })
+    //     )
+    // } else {
+    //     const url = process.env.INVITES_URL;
+    //     const dateConverted = new Date(date)
+    //     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    //     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    //     const today = `${moment(now).format("YYYY-MM-DD")} ${hourConverted}:${minute}`;
+    //     const arr = {
+    //         token,
+    //         location_id,
+    //         contact_id,
+    //         campaign_id,
+    //         scheduled: true,
+    //         send_at: today
+    //     };
+    //     return(
+    //         axios.post(url, arr, config)
+    //         .then(res => {
+    //             response.setHeader('Content-Type', 'application/json');
+    //             response.end(JSON.stringify({ data: res.data }));
+    //         })
+    //         .catch(err => {
+    //             if (err.response.data.contact_id) {
+    //                 console.log(err.response.data.message)
+    //                 response.status(200).send({message: err.response.data.message})
+    //             } else {
+    //                 console.log(err);
+    //                 response.status(500)({error: err})
+    //             }
+    //         })
+    //     )
+    // }
 
 }
 
