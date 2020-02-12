@@ -248,8 +248,9 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
 
     if (scheduleDateFormatted < now) {
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-        var nextDay = new Date()
-        nextDay.setDate(dateConverted.getDate() + 1)
+        var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+        var nextDay = new Date(now)
+        nextDay.setDate(now.getDate() + 1)
         const url = process.env.INVITES_URL;
         const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
         const arr = {
@@ -261,7 +262,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             send_at: tommorow
         };
 
-        return console.log('Here')
+        return console.log(tomorrow)
         // return(
         //     axios.post(url, arr, config)
         //     .then(res => {
