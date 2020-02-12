@@ -33,7 +33,11 @@ app.post('/api/test', (request, res) => {
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
     const formattedDate = moment(date).format("YYYY-MM-DD");
     const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
-    const now = new Date()
+    const now = new Date().getTime()
+
+    var usaTime = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    usaTime = new Date(usaTime);
+    console.log('USA time: '+usaTime.toLocaleString())
     console.log(now)
 
     res.sendStatus(200)
