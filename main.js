@@ -242,16 +242,16 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     const dateConverted = new Date(date)
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    const thisYear = new Date(now).getFullYear().toLocaleString();
-    const thisMonth = new Date(now).getMonth().toLocaleString();
-    const thisDay =  new Date(now).getUTCDate().toLocaleString()
+    const thisYear = new Date(now).getFullYear()
+    const thisMonth = new Date(now).getMonth()
+    const thisDay =  new Date(now).getUTCDate()
     const scheduleDate = `${thisYear}-${thisMonth}-${thisDay}T${hourConverted}:${minute}:00-0700`;
     const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
 
     return (
-        console.log(now),
-        console.log(scheduleDateFormatted),
-        console.log(scheduleDate)
+        console.log(thisYear),
+        console.log(thisMonth),
+        console.log(thisDay)
     )
 
     // if (new Date(now).toLocaleString() > scheduleDateFormatted ) {
