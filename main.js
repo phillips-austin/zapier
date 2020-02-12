@@ -248,7 +248,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
 
     if (scheduleDateFormatted < now) {
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-        var nextDay = new Date(dateConverted)
+        var nextDay = new Date()
         nextDay.setDate(dateConverted.getDate() + 1)
         const url = process.env.INVITES_URL;
         const tommorow = moment(nextDay).format('YYYY-MM-DD') + ' ' + `${hourConverted}:${minute}`;
@@ -278,7 +278,6 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
         )
     } else {
         const url = process.env.INVITES_URL;
-        const dateConverted = new Date(date)
         const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
         const today = `${moment(now).format("YYYY-MM-DD")} ${hourConverted}:${minute}`;
