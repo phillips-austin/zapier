@@ -34,9 +34,7 @@ app.post('/api/test', (request, res) => {
     const formattedDate = moment(date).format("YYYY-MM-DD");
     const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
     const now = new Date().getTime();
-    console.log(hour);
-    console.log(hour+12);
-    console.log(minute)
+console.log(request.body)
 
     res.sendStatus(200)
 })
