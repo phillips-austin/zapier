@@ -31,14 +31,11 @@ app.post('/api/test', (request, res) => {
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const scheduleDate = `${year}-${month}-${day}T${hourConverted}:${minute}:00-0700`;
-    const formattedDate = moment(date).format("YYYY-MM-DD");
-    const finalDate = formattedDate + ' ' + `${hourConverted}:${minute}`
-    const now = new Date().getTime()
-
-    var usaTime = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
-    usaTime = new Date(usaTime);
-    console.log('USA time: '+usaTime.toLocaleString())
-    console.log(now)
+    const scheduleDateFormatted = new Date(scheduleDate).toLocaleString("en-US", {timeZone: "America/Denver"});
+    var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    console.log(scheduleDateFormatted);
+    console.log(now);
+    console.log(scheduleDateFormatted > now)
 
     res.sendStatus(200)
 })
