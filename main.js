@@ -263,7 +263,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             send_at: tommorow
         };
 
-        return console.log(tomorrow)
+        return console.log(nextDay)
         // return(
         //     axios.post(url, arr, config)
         //     .then(res => {
