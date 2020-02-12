@@ -45,7 +45,11 @@ app.post('/api/test', (request, res) => {
     // today at a time
     console.log(moment(now).format("YYYY-MM-DD") + ` ${hourConverted}:${minute}`)
 
-    console.log(request.date.length)
+    if (date) {
+        return console.log(date)
+    } else {
+        return console.log("No Date")
+    }
 
     res.sendStatus(200)
 })
