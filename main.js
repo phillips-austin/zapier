@@ -130,8 +130,7 @@ getContact = (email, phone, token, locations, campaign_id, how, date, hour, minu
     }
     axios.get(url, arr, config)
     .then(res => {
-        const {id} = res.data.data[0];
-        console.log(id)
+        // const {id} = res.data.data[0];
         console.log(res)
         // if (how === 'Instant') {
         //     return sendInvite(id, token, locations, campaign_id, response)
