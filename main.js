@@ -124,7 +124,7 @@ getContact = (email, phone, token, locations, campaign_id, how, date, hour, minu
     const arr = {
         params: {
             token,
-            email
+            phone
         }
     }
     axios.get(url, arr, config)
