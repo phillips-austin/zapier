@@ -224,13 +224,14 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             response.end(JSON.stringify({ data: res.data }));
         })
         .catch(err => {
-            if (err.response.data.contact_id) {
-                console.log(err.response.data.message)
-                response.status(200).send({message: err.response.data.message})
-            } else {
-                console.log(err);
-                response.status(500)({error: err})
-            }
+            console.log(err.response.data.message)
+            // if (err.response.data.contact_id) {
+            //     console.log(err.response.data.message)
+            //     response.status(200).send({message: err.response.data.message})
+            // } else {
+            //     console.log(err);
+            //     response.status(500)({error: err})
+            // }
         })
     )
 }
