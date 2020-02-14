@@ -131,11 +131,13 @@ getContact = (email, phone, token, locations, campaign_id, how, date, hour, minu
     axios.get(url, arr, config)
     .then(res => {
         const {id} = res.data.data[0];
-        if (how === 'Instant') {
-            return sendInvite(id, token, locations, campaign_id, response)
-        } else {
-            return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-        }
+        console.log(id)
+        console.log(res)
+        // if (how === 'Instant') {
+        //     return sendInvite(id, token, locations, campaign_id, response)
+        // } else {
+        //     return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        // }
     })
     .catch(err => {
         console.log(err);
