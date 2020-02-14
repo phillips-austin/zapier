@@ -109,10 +109,9 @@ app.post('/api/swell', (request, response) => {
     .catch(err => {
         if (err.response.data.errors.email){
             console.log("Email")
-            // getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            getContactByEmail(email, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else if (err.response.data.errors.phone) {
-            // getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-            console.log("Phone")
+            getContactByPhone(phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else {
             console.log(err);
             response.send(500, {error: err})
@@ -120,14 +119,37 @@ app.post('/api/swell', (request, response) => {
     })
 });
 
-// Get existing contact
-getContact = (email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response) => {
+// Get existing contact by the email that is used
+getContactByEmail = (email, token, locations, campaign_id, how, date, hour, minute, ampm, response) => {
     const url = process.env.CONTACTS_URL;
     const arr = {
         params: {
             token,
-            email,
-            phone
+            email        
+        }
+    }
+    axios.get(url, arr, config)
+    .then(res => {
+        const {id} = res.data.data[0];
+        if (how === 'Instant') {
+            return sendInvite(id, token, locations, campaign_id, response)
+        } else {
+            return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        response.send(500, {error: err})
+    })
+}
+
+// Get existing contact by the phone that is used
+getContactByPhone = (phone, token, locations, campaign_id, how, date, hour, minute, ampm, response) => {
+    const url = process.env.CONTACTS_URL;
+    const arr = {
+        params: {
+            token,
+            phone        
         }
     }
     axios.get(url, arr, config)
