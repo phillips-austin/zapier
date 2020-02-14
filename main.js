@@ -213,6 +213,12 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
     const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
 
     if (new Date(now).getTime() > new Date(scheduleDate).getTime()) {
+        function addZero(n){
+            if (n <= 9) {
+                return '0' + n
+            }
+              return n
+        }
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
         now = new Date(now);
         var nextDay = new Date(now)
