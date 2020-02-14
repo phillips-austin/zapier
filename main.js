@@ -208,32 +208,74 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
     const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+    now = new Date(now)
     const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
-    const arr = {
-        token,
-        location_id,
-        contact_id,
-        campaign_id,
-        scheduled: true,
-        send_at: scheduleDate
-    };
-    return (
-        axios.post(url, arr, config)
-        .then(res => {
-            response.setHeader('Content-Type', 'application/json');
-            response.end(JSON.stringify({ data: res.data }));
-        })
-        .catch(err => {
-            console.log(err.response.data.message)
-            // if (err.response.data.contact_id) {
-            //     console.log(err.response.data.message)
-            //     response.status(200).send({message: err.response.data.message})
-            // } else {
-            //     console.log(err);
-            //     response.status(500)({error: err})
-            // }
-        })
-    )
+
+    if (new Date(now).getTime() > new Date(scheduleDate).getTime()) {
+        var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
+        now = new Date(now);
+        var nextDay = new Date(now)
+        nextDay.setDate(now.getDate() + 1)
+        const tomorrow = new Date(nextDay)
+        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
+        const arr = {
+            token,
+            location_id,
+            contact_id,
+            campaign_id,
+            scheduled: true,
+            send_at: tomorrowFormatted
+        };
+        return(
+            axios.post(url, arr, config)
+            .then(res => {
+                response.setHeader('Content-Type', 'application/json');
+                response.end(JSON.stringify({ data: res.data }));
+            })
+            .catch(err => {
+                if (err.response.data.contact_id) {
+                    console.log(err.response.data.message)
+                    response.status(200).send({message: err.response.data.message})
+                } else {
+                    console.log(err);
+                    response.status(500)({error: err})
+                }
+            })
+        )
+    } else {
+        const dateConverted = new Date(date)
+        const year = dateConverted.getFullYear()
+        const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
+        const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
+        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+        const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
+        const arr = {
+            token,
+            location_id,
+            contact_id,
+            campaign_id,
+            scheduled: true,
+            send_at: scheduleDate
+        };
+
+        return (
+            axios.post(url, arr, config)
+            .then(res => {
+                response.setHeader('Content-Type', 'application/json');
+                response.end(JSON.stringify({ data: res.data }));
+            })
+            .catch(err => {
+                if (err.response.data.contact_id) {
+                    console.log(err.response.data.message)
+                    response.status(200).send({message: err.response.data.message})
+                } else {
+                    console.log(err);
+                    response.status(500)({error: err})
+                }
+            })
+        )
+    }
 }
 
 sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
