@@ -108,9 +108,11 @@ app.post('/api/swell', (request, response) => {
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            console.log("Email")
+            // getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else if (err.response.data.errors.phone) {
-            getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            // getContact(email, phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            console.log("Phone")
         } else {
             console.log(err);
             response.send(500, {error: err})
@@ -124,18 +126,18 @@ getContact = (email, phone, token, locations, campaign_id, how, date, hour, minu
     const arr = {
         params: {
             token,
+            email,
             phone
         }
     }
     axios.get(url, arr, config)
     .then(res => {
-        // const {id} = res.data.data[0];
-        console.log(res)
-        // if (how === 'Instant') {
-        //     return sendInvite(id, token, locations, campaign_id, response)
-        // } else {
-        //     return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-        // }
+        const {id} = res.data.data[0];
+        if (how === 'Instant') {
+            return sendInvite(id, token, locations, campaign_id, response)
+        } else {
+            return sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        }
     })
     .catch(err => {
         console.log(err);
