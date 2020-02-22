@@ -94,34 +94,32 @@ app.post('/api/swell', (request, response) => {
     const phoneSplit = phone.split(',');
     const firstEmail = emailSplit[0];
     const firstPhone = phoneSplit[0];
-    console.log(firstEmail)
-    console.log(firstPhone)
-    // const url = process.env.CONTACTS_URL;
-    // const arr = {
-    //     token,
-    //     name,
-    //     firstEmail,
-    //     firstPhone,
-    //     locations: {id: locations}
-    // }
-    // axios.post(url, arr, config)
-    // .then(res => {
-    //     if (how === 'Instant') {
-    //         return sendInvite(res.data.id, token, locations, campaign_id, response)
-    //     } else {
-    //         return sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-    //     }
-    // })
-    // .catch(err => {
-    //     if (err.response.data.errors.email){
-    //         getContactByEmail(firstEmail, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-    //     } else if (err.response.data.errors.phone) {
-    //         getContactByPhone(firstPhone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-    //     } else {
-    //         console.log(err);
-    //         response.send(500, {error: err})
-    //     }
-    // })
+    const url = process.env.CONTACTS_URL;
+    const arr = {
+        token,
+        name,
+        firstEmail,
+        firstPhone,
+        locations: {id: locations}
+    }
+    axios.post(url, arr, config)
+    .then(res => {
+        if (how === 'Instant') {
+            return sendInvite(res.data.id, token, locations, campaign_id, response)
+        } else {
+            return sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        }
+    })
+    .catch(err => {
+        if (err.response.data.errors.email){
+            getContactByEmail(firstEmail, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        } else if (err.response.data.errors.phone) {
+            getContactByPhone(firstPhone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+        } else {
+            console.log(err);
+            response.send(500, {error: err})
+        }
+    })
 });
 
 // Get existing contact by the email that is used
