@@ -90,16 +90,14 @@ app.get('/api/campaigns', (request, response) => {
 // Create Contact
 app.post('/api/swell', (request, response) => {
     const {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
-    const emailSplit = email.split(',');
-    const phoneSplit = phone.split(',');
-    const firstEmail = emailSplit[1];
-    const firstPhone = phoneSplit[0];
+    const email = email.split(',')[0];
+    const phone = phone.split(',')[0];
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
         name,
-        firstEmail,
-        firstPhone,
+        email,
+        phone,
         locations: {id: locations}
     }
     axios.post(url, arr, config)
