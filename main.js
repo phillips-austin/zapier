@@ -89,9 +89,9 @@ app.get('/api/campaigns', (request, response) => {
 
 // Create Contact
 app.post('/api/swell', (request, response) => {
-    const {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
-    const email = email.split(',')[0];
-    const phone = phone.split(',')[0];
+    const {token, zapPhone, name, zapEmail, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
+    const email = zapEmail.split(',')[0];
+    const phone = zapPhone.split(',')[0];
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
