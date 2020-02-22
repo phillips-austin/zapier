@@ -110,7 +110,9 @@ app.post('/api/swell', (request, response) => {
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContactByEmail(firstEmail, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            console.log(err.response.data.errors.email)
+            console.log(firstEmail)
+            // getContactByEmail(firstEmail, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else if (err.response.data.errors.phone) {
             getContactByPhone(firstPhone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else {
