@@ -90,12 +90,14 @@ app.get('/api/campaigns', (request, response) => {
 // Create Contact
 app.post('/api/swell', (request, response) => {
     const {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
+    const firstEmail = email.split(',')[0];
+    const firstPhone = phone.split(',')[0];
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
         name,
-        email,
-        phone,
+        firstEmail,
+        firstPhone,
         locations: {id: locations}
     }
     axios.post(url, arr, config)
@@ -108,9 +110,9 @@ app.post('/api/swell', (request, response) => {
     })
     .catch(err => {
         if (err.response.data.errors.email){
-            getContactByEmail(email, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            getContactByEmail(firstEmail, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else if (err.response.data.errors.phone) {
-            getContactByPhone(phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            getContactByPhone(firstPhone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else {
             console.log(err);
             response.send(500, {error: err})
