@@ -42,7 +42,7 @@ app.get('/api/auth', (request, response) => {
         response.end(JSON.stringify(firstLocation));
     })
     .catch(err => {
-        response.status(500)({Authenticated: false})
+        response.send(500, {Authenticated: false})
     })
 
 });
@@ -62,7 +62,7 @@ app.get('/api/locations', (request, response) => {
         response.end(JSON.stringify(res.data.data));
     })
     .catch(err => {
-        response.status(500).send({Authenticated: false})
+        response.send(500, {Authenticated: false})
     })
 
 });
@@ -83,7 +83,7 @@ app.get('/api/campaigns', (request, response) => {
     })
     .catch(err => {
         console.log(err);
-        response.status(500).send({error: err})
+        response.send(500, {message: err.response.data.message})
     })
 })
 
@@ -115,7 +115,7 @@ app.post('/api/swell', (request, response) => {
             getContactByPhone(phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
         } else {
             console.log(err);
-            response.send(500, {error: err})
+            response.send(500, {message: err.response.data.message})
         }
     })
 });
@@ -140,7 +140,7 @@ getContactByEmail = (email, token, locations, campaign_id, how, date, hour, minu
     })
     .catch(err => {
         console.log(err);
-        response.send(500, {error: err})
+        response.send(500, {message: err.response.data.message})
     })
 }
 
@@ -164,7 +164,7 @@ getContactByPhone = (phone, token, locations, campaign_id, how, date, hour, minu
     })
     .catch(err => {
         console.log(err);
-        response.send(500, {error: err})
+        response.send(500, {message: err.response.data.message})
     })
 }
 
@@ -189,7 +189,7 @@ sendInvite = (contact_id, token, location_id, campaign_id, response) => {
             response.status(200).send({message: err.response.data.message})
         } else {
             console.log(err);
-            response.status(500)({error: err})
+            response.send(500, {message: err.response.data.message})
         }
     })
 }
@@ -246,7 +246,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
                     response.status(200).send({message: err.response.data.message})
                 } else {
                     console.log(err);
-                    response.status(500)({error: err})
+                    response.send(500, {message: err.response.data.message})
                 }
             })
         )
@@ -278,7 +278,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
                     response.status(200).send({message: err.response.data.message})
                 } else {
                     console.log(err);
-                    response.status(500)({error: err})
+                    response.send(500, {message: err.response.data.message})
                 }
             })
         )
@@ -332,7 +332,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
                     response.status(200).send({message: err.response.data.message})
                 } else {
                     console.log(err);
-                    response.status(500)({error: err})
+                    response.send(500, {message: err.response.data.message})
                 }
             })
         )
@@ -368,7 +368,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
                     response.status(200).send({message: err.response.data.message})
                 } else {
                     console.log(err);
-                    response.status(500)({error: err})
+                    response.send(500, {message: err.response.data.message})
                 }
             })
         )
