@@ -103,7 +103,7 @@ app.post('/api/createcontact', (request, response) => {
     }
     axios.post(url, arr, config)
     .then(res => {
-        response.status(200).send({message: "Contact Successfully Created"})
+        response.status(200).send(res.data)
     })
     .catch(err => {
         if (err.response.data.errors.phone) response.status(200).send({message: `Contact with phone number: ${phone} already exists.`});
