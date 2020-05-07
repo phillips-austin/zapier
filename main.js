@@ -87,6 +87,31 @@ app.get('/api/campaigns', (request, response) => {
     })
 })
 
+// Create Contact Action
+app.post('/api/createcontact', (request, response) => {
+    var {name, phone, email, locations} = request.body;
+    const {token} = request.query;
+    email = email.split(',')[0];
+    phone = phone.split(',')[0];
+    const url = process.env.CONTACTS_URL;
+    const arr = {
+        token,
+        name,
+        email,
+        phone,
+        locations: {id: locations}
+    }
+    axios.post(url, arr, config)
+    .then(res => {
+        response.status(200).send({message: "Contact Successfully Created"})
+    })
+    .catch(err => {
+        if (err.response.data.errors.phone) response.status(200).send({message: `Contact with phone number: ${phone} already exists.`});
+        else if (err.response.data.errors.email) response.status(200).send({message: `Contact with email: ${email} already exists.`});
+        else response.status(500).send(err.response.data);
+    })
+})
+
 // Create Contact
 app.post('/api/swell', (request, response) => {
     var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
