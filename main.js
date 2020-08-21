@@ -244,7 +244,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             }
         }
     }
-    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    // const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     now = new Date(now)
     const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
@@ -323,7 +323,18 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
 
 sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
     const dateConverted = new Date(date)
-    const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    // const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+    const hourConverted = () => {
+        if (hour === 12) {
+            return hour;
+        } else {
+            if (ampm === 'AM') {
+                return `0${hour}`;
+            } else if (ampm === 'PM') {
+                return hour + 12;
+            }
+        }
+    }
     function addZero(n){
         if (n <= 9) {
             return '0' + n
