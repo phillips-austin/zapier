@@ -24,6 +24,16 @@ const config = {
 }
 // Postman testing
 app.post('/api/test', (request, res) => {
+    const {hour, ampm} = request.body;
+    const hourConverted = () => {
+        if (hour === 12) {
+            return hour;
+        } else {
+            return hour + 25
+        }
+    }
+
+    console.log(hourConverted())
 })
 
 // Token Auth
@@ -244,10 +254,9 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             }
         }
     }
-    // const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     now = new Date(now)
-    const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
+    const scheduleDate = `${year}-${month}-${day} ${hourConverted()}:${minute}`;
 
     if (new Date(now).getTime() > new Date(scheduleDate).getTime()) {
         function addZero(n){
@@ -291,8 +300,18 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
         const year = dateConverted.getFullYear()
         const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
         const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
-        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
-        const scheduleDate = `${year}-${month}-${day} ${hourConverted}:${minute}`;
+        const hourConverted = () => {
+            if (hour === 12) {
+                return hour;
+            } else {
+                if (ampm === 'AM') {
+                    return `0${hour}`;
+                } else if (ampm === 'PM') {
+                    return hour + 12;
+                }
+            }
+        }
+        const scheduleDate = `${year}-${month}-${day} ${hourConverted()}:${minute}`;
         const arr = {
             token,
             location_id,
@@ -323,7 +342,6 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
 
 sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
     const dateConverted = new Date(date)
-    // const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     const hourConverted = () => {
         if (hour === 12) {
             return hour;
@@ -343,7 +361,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
     }
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     now = new Date(now)
-    const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted + ':' + minute;
+    const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted() + ':' + minute;
 
     if (new Date(now).getTime() > new Date(todayScheduled).getTime()) {
         const url = process.env.INVITES_URL;
@@ -358,7 +376,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
         var nextDay = new Date(now)
         nextDay.setDate(now.getDate() + 1)
         const tomorrow = new Date(nextDay)
-        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
+        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted() + ':' + minute;
         const arr = {
             token,
             location_id,
@@ -391,10 +409,20 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             }
               return n
         }
-        const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
+        const hourConverted = () => {
+            if (hour === 12) {
+                return hour;
+            } else {
+                if (ampm === 'AM') {
+                    return `0${hour}`;
+                } else if (ampm === 'PM') {
+                    return hour + 12;
+                }
+            }
+        }
         var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
         now = new Date(now)
-        const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted + ':' + minute;
+        const todayScheduled = now.getFullYear() + '-' + addZero(now.getMonth() + 1) + '-' + addZero(now.getDate()) + ' ' + hourConverted() + ':' + minute;
         const arr = {
             token,
             location_id,
