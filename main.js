@@ -233,6 +233,17 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
     const year = dateConverted.getFullYear()
     const month = dateConverted.getMonth() < 9 ? `0${dateConverted.getMonth() + 1}` : dateConverted.getMonth() + 1;
     const day = dateConverted.getUTCDate() < 10 ? `0${dateConverted.getUTCDate()}` : dateConverted.getUTCDate();
+    const hourConverted = () => {
+        if (hour === 12) {
+            return hour;
+        } else {
+            if (ampm === 'AM') {
+                return `0${hour}`;
+            } else if (ampm === 'PM') {
+                return hour + 12;
+            }
+        }
+    }
     const hourConverted = ampm === 'AM' ? `0${hour}` : hour + 12;
     var now = new Date().toLocaleString("en-US", {timeZone: "America/Denver"});
     now = new Date(now)
