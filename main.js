@@ -248,7 +248,11 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             return hour;
         } else {
             if (ampm === 'AM') {
-                return `0${hour}`;
+                if (hour > 9) {
+                    return hour;
+                } else {
+                    return `0${hour}`;
+                }
             } else if (ampm === 'PM') {
                 return hour + 12;
             }
@@ -305,11 +309,16 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
                 return hour;
             } else {
                 if (ampm === 'AM') {
-                    return `0${hour}`;
+                    if (hour > 9) {
+                        return hour;
+                    } else {
+                        return `0${hour}`;
+                    }
                 } else if (ampm === 'PM') {
                     return hour + 12;
                 }
             }
+        }
         }
         const scheduleDate = `${year}-${month}-${day} ${hourConverted()}:${minute}`;
         const arr = {
@@ -347,7 +356,11 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             return hour;
         } else {
             if (ampm === 'AM') {
-                return `0${hour}`;
+                if (hour > 9) {
+                    return hour;
+                } else {
+                    return `0${hour}`;
+                }
             } else if (ampm === 'PM') {
                 return hour + 12;
             }
@@ -414,7 +427,11 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
                 return hour;
             } else {
                 if (ampm === 'AM') {
-                    return `0${hour}`;
+                    if (hour > 9) {
+                        return hour;
+                    } else {
+                        return `0${hour}`;
+                    }
                 } else if (ampm === 'PM') {
                     return hour + 12;
                 }
