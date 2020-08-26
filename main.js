@@ -319,7 +319,6 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
                 }
             }
         }
-        }
         const scheduleDate = `${year}-${month}-${day} ${hourConverted()}:${minute}`;
         const arr = {
             token,
