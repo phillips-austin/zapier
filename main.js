@@ -274,7 +274,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
         var nextDay = new Date(now)
         nextDay.setDate(now.getDate() + 1)
         const tomorrow = new Date(nextDay)
-        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted + ':' + minute;
+        const tomorrowFormatted = tomorrow.getFullYear() + '-' + addZero(tomorrow.getMonth() + 1) + '-' + addZero(tomorrow.getDate()) + ' ' + hourConverted() + ':' + minute;
         const arr = {
             token,
             location_id,
