@@ -23,17 +23,8 @@ const config = {
     }
 }
 // Postman testing
-app.post('/api/test', (request, res) => {
-    const {hour, ampm} = request.body;
-    const hourConverted = () => {
-        if (hour === 12) {
-            return hour;
-        } else {
-            return hour + 25
-        }
-    }
-
-    console.log(hourConverted())
+app.get('/api/test', (request, res) => {
+    res.json({Status: "Staging set"})
 })
 
 // Token Auth
