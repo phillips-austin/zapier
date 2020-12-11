@@ -24,7 +24,7 @@ const config = {
 }
 // Postman testing
 app.get('/api/test', (request, res) => {
-    res.json({Status: "Staging set"})
+    res.json({status: "Staging set"})
 })
 
 // Token Auth
