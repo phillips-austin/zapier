@@ -32,6 +32,7 @@ router.post('/', (request, response) => {
             return invite.sendInvite(res.data.id, token, locations, campaign_id)
                     .then(res => {
                         response.json(res.invite.message)
+                        console.log(res.invite.message)
                     })
                     .catch(err => {
                         response.json(err.response.data.message)
@@ -40,6 +41,7 @@ router.post('/', (request, response) => {
             return invite.sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
                     .then(res => {
                         response.json(res.data)
+                        console.log(res.data)
                     })
                     .catch(err => {
                         response.json(err)
@@ -62,6 +64,7 @@ router.post('/', (request, response) => {
                             return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
                             .then(res => {
                                 response.json(res.data)
+                                console.log(res.data)
                             })
                             .catch(err => {
                                 response.json(err)
@@ -77,6 +80,7 @@ router.post('/', (request, response) => {
                     return invite.sendInvite(res.data[0].id, token, locations, campaign_id)
                             .then(data => {
                                 response.json(data.invite.message)
+                                console.log(data.invite.message)
                             })
                             .catch(err => {
                                 response.json(err.response.data.message)
@@ -85,6 +89,7 @@ router.post('/', (request, response) => {
                     return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
                     .then(res => {
                         response.json(res.data)
+                        console.log(res.data)
                     })
                     .catch(err => {
                         response.json(err)
