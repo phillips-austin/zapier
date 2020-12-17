@@ -28,7 +28,7 @@ router.post('/', (request, response) => {
         const {id} = res.data;
         text.sendText(id, template_id , token)
         .then(res => {
-            response.json(res.data)
+            response.json(res.data[0])
         })
         .catch(err => {
             console.log(err.response.data)
@@ -42,7 +42,7 @@ router.post('/', (request, response) => {
                 const {id} = res.data[0]
                 text.sendText(id, template_id , token)
                 .then(res => {
-                    response.json(res.data)
+                    response.json(res.data[0])
                 })
                 .catch(err => {
                     console.log(err.response.data)
