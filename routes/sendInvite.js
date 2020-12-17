@@ -14,13 +14,13 @@ router.post('/', (request, response) => {
     var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
     email = email.split(',')[0];
     phone = phone.split(',')[0];
-    const phoneFormatted = phone.replace(/[^\d\+]/g,"");
+    phone = phone.replace(/[^\d\+]/g,"");
     const url = process.env.CONTACTS_URL;
     const arr = {
         token,
         name,
         email,
-        phoneFormatted,
+        phone,
         locations: {id: locations}
     }
 
@@ -36,6 +36,7 @@ router.post('/', (request, response) => {
                     })
                     .catch(err => {
                         response.json(err.response.data.message)
+                        console.log("Line: 39")
                     })
         } else {
             return invite.sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
@@ -45,6 +46,7 @@ router.post('/', (request, response) => {
                     })
                     .catch(err => {
                         response.json(err)
+                        console.log("Line: 49")
                     })
         }
     })
@@ -56,9 +58,11 @@ router.post('/', (request, response) => {
                             return invite.sendInvite(res.data[0].id, token, locations, campaign_id)
                                     .then(data => {
                                         response.json(data.invite.message)
+                                        console.log(res.invite.message)
                                     })
                                     .catch(err => {
                                         response.json(err.response.data.message)
+                                        console.log("Line: 65")
                                     })
                         } else {
                             return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
@@ -68,6 +72,7 @@ router.post('/', (request, response) => {
                             })
                             .catch(err => {
                                 response.json(err)
+                                console.log("Line: 75")
                             })                        }
                     })
                     .catch(err => {
@@ -84,6 +89,7 @@ router.post('/', (request, response) => {
                             })
                             .catch(err => {
                                 response.json(err.response.data.message)
+                                console.log("Line: 92")
                             })
                 } else {
                     return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
@@ -93,7 +99,9 @@ router.post('/', (request, response) => {
                     })
                     .catch(err => {
                         response.json(err)
-                    })                }
+                        console.log("Line: 102")
+                    })                
+                }
             })
             .catch(err => {
                 console.log(err)
