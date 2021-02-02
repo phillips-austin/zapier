@@ -1,6 +1,7 @@
 const router = require('express').Router();  
 const axios = require('axios');
 const invite = require('../functions/sendInvite');
+const contacts = require('../functions/contacts');
 
 const config = {
     headers: {
@@ -21,15 +22,68 @@ router.post('/', (request, response) => {
         name,
         email,
         phone,
-        locations: {id: locations}
+        locations: [locations]
+    }
+    const getArrByPhone = {
+        params: {
+            token,
+            phone
+        }
+    }
+    const getArrByEmail = {
+        params: {
+            token,
+            email
+        }
     }
 
-    console.log(arr)
-    // Create Contact
-    axios.post(url, arr, config)
+    axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
     .then(res => {
-        if (how === 'Instant') {
-            return invite.sendInvite(res.data.id, token, locations, campaign_id)
+        const found = res.data.data.length == 1;
+        if(found) {
+            const {id} = res.data.data[0]
+            send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+        } else {
+            axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
+            .then(res => {
+                const foundEmail = res.data.data.length == 1;
+                if(foundEmail) {
+                    const {id} = res.data.data[0]
+                    send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+                } else {
+                    createContact(token, name, phone, email, locations)
+                }
+            })
+            .catch(err => {
+                return console.log("Error when searching for contact: Email", err)
+            })
+        }
+    })
+    .catch(err => {
+        return console.log("Error when searching for contact: Phone", err)
+    })
+
+    function createContact(token, name, phone, email, locations) {
+        const arr = {
+            token,
+            name,
+            email,
+            phone,
+            locations: [locations]
+        }
+        axios.post(process.env.CONTACTS_URL, arr, config)
+        .then(res => {
+            const {id} = res.data;
+            send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+        })
+        .catch(err => {
+            return console.log("Error when creating contact", err)
+        })
+    }
+
+    function send(id, token, locations, campaign_id, how, date, hour, ampm, minute){
+        if(how === "Instant") {
+            return invite.sendInvite(id, token, locations, campaign_id)
                     .then(res => {
                         response.json(res.invite.message)
                         console.log(res.invite.message)
@@ -39,7 +93,7 @@ router.post('/', (request, response) => {
                         console.log("Line: 39")
                     })
         } else {
-            return invite.sendInviteScheduled(res.data.id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+            return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
                     .then(res => {
                         response.json(res.data)
                         console.log(res.data)
@@ -49,68 +103,7 @@ router.post('/', (request, response) => {
                         console.log("Line: 49")
                     })
         }
-    })
-    .catch(err => {
-        if (err.response.data.errors.email){
-            return invite.getContactByEmail(email, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-                    .then(res => {
-                        if (how === "Instant") {
-                            return invite.sendInvite(res.data[0].id, token, locations, campaign_id)
-                                    .then(data => {
-                                        response.json(data.invite.message)
-                                        console.log(res.invite.message)
-                                    })
-                                    .catch(err => {
-                                        response.json(err.response.data.message)
-                                        console.log("Line: 65")
-                                    })
-                        } else {
-                            return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-                            .then(res => {
-                                response.json(res.data)
-                                console.log(res.data)
-                            })
-                            .catch(err => {
-                                response.json(err)
-                                console.log("Line: 75")
-                            })                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-        } else if (err.response.data.errors.phone) {
-            return invite.getContactByPhone(phone, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-            .then(res => {
-                if (how === "Instant") {
-                    return invite.sendInvite(res.data[0].id, token, locations, campaign_id)
-                            .then(data => {
-                                response.json(data.invite.message)
-                                console.log(data.invite.message)
-                            })
-                            .catch(err => {
-                                response.json(err.response.data.message)
-                                console.log("Line: 92")
-                            })
-                } else {
-                    return invite.sendInviteScheduled(res.data[0].id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-                    .then(res => {
-                        response.json(res.data)
-                        console.log(res.data)
-                    })
-                    .catch(err => {
-                        response.json(err)
-                        console.log("Line: 102")
-                    })                
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        } else {
-            console.log(err);
-            response.status(500).send({message: err.response.data.message})
-        }
-    })
+    }
 });
 
 module.exports = router;

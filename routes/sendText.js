@@ -16,46 +16,58 @@ router.post('/', (request, response) => {
     const {token} = request.query;
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
-    const url = process.env.CONTACTS_URL;
-    const arr = {
-        token,
-        name,
-        phone,
-        locations: {id: locations}
+
+    const getArrByPhone = {
+        params: {
+            token,
+            phone
+        }
     }
-    axios.post(url, arr, config)
+
+    axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
     .then(res => {
-        const {id} = res.data;
-        text.sendText(id, template_id , token)
-        .then(res => {
-            response.json(res.data[0])
-        })
-        .catch(err => {
-            console.log(err.response.data)
-            response.status(500).send(err.response.data)
-        })
-    })
-    .catch(err => {
-        if (err.response.data.errors.phone) {
-            contact.getContactByPhone(phone, token)
+        const found = res.data.data.length == 1;
+        if(found) {
+            const {id} = res.data.data[0]
+            text.sendText(id, template_id , token)
             .then(res => {
-                const {id} = res.data[0]
-                text.sendText(id, template_id , token)
-                .then(res => {
-                    response.json(res.data[0])
-                })
-                .catch(err => {
-                    console.log(err.response.data)
-                    response.status(500).send(err.response.data)
-                })
+                response.json(res.data[0])
             })
             .catch(err => {
-                console.log(err)
+                console.log(err.response.data)
                 response.status(500).send(err.response.data)
             })
+        } else {
+            createContact(token, name, phone, locations)
         }
-        else response.status(500).send(err.response.data);
     })
+    .catch(err => {
+        return console.log("Error when searching for contact: Phone", err)
+    })
+
+    function createContact(token, name, phone, locations) {
+        const arr = {
+            token,
+            name,
+            phone,
+            locations: [locations]
+        }
+        axios.post(process.env.CONTACTS_URL, arr, config)
+        .then(res => {
+            const {id} = res.data;
+            text.sendText(id, template_id , token)
+            .then(res => {
+                response.json(res.data[0])
+            })
+            .catch(err => {
+                console.log(err.response.data)
+                response.status(500).send(err.response.data)
+            })
+        })
+        .catch(err => {
+            return console.log("Error when creating contact", err)
+        })
+    }
 })
 
 module.exports = router;

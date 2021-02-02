@@ -103,19 +103,20 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             scheduled: true,
             send_at: tomorrowFormatted
         };
-        return(
-            axios.post(url, arr, config)
-            .then(res => {
-                return(res.data)
-            })
-            .catch(err => {
-                if (err.response.data.contact_id) {
-                    return({message: err.response.data.message})
-                } else {
-                    return({message: err.response.data.message})
-                }
-            })
-        )
+        console.log(arr)
+        // return(
+        //     axios.post(url, arr, config)
+        //     .then(res => {
+        //         return(res.data)
+        //     })
+        //     .catch(err => {
+        //         if (err.response.data.contact_id) {
+        //             return({message: err.response.data.message})
+        //         } else {
+        //             return({message: err.response.data.message})
+        //         }
+        //     })
+        // )
     } else {
         const dateConverted = new Date(date)
         const year = dateConverted.getFullYear()
@@ -145,22 +146,27 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             scheduled: true,
             send_at: scheduleDate
         };
+        console.log(arr)
 
-        return (
-            axios.post(url, arr, config)
-            .then(res => {
-                return(res.data)
-            })
-            .catch(err => {
-                if (err.response.data.contact_id) {
-                    return({message: err.response.data.message})
-                } else {
-                    return({message: err.response.data.message})
-                }
-            })
-        )
+
+        // return (
+        //     axios.post(url, arr, config)
+        //     .then(res => {
+        //         return(res.data)
+        //     })
+        //     .catch(err => {
+        //         if (err.response.data.contact_id) {
+        //             return({message: err.response.data.message})
+        //         } else {
+        //             return({message: err.response.data.message})
+        //         }
+        //     })
+        // )
     }
 }
+
+
+// Send invite Today
 
 sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, response) => {
     const dateConverted = new Date(date)
