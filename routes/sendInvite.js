@@ -37,73 +37,78 @@ router.post('/', (request, response) => {
         }
     }
 
-    axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
-    .then(res => {
-        const found = res.data.data.length == 1;
-        if(found) {
-            const {id} = res.data.data[0]
-            send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
-        } else {
-            axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
-            .then(res => {
-                const foundEmail = res.data.data.length == 1;
-                if(foundEmail) {
-                    const {id} = res.data.data[0]
-                    send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
-                } else {
-                    createContact(token, name, phone, email, locations)
-                }
-            })
-            .catch(err => {
-                return console.log("Error when searching for contact: Email", err)
-            })
-        }
-    })
-    .catch(err => {
-        return console.log("Error when searching for contact: Phone", err)
-    })
-
-    function createContact(token, name, phone, email, locations) {
-        const arr = {
-            token,
-            name,
-            email,
-            phone,
-            locations: [locations]
-        }
-        axios.post(process.env.CONTACTS_URL, arr, config)
+    if(phone.length === 0 && email.length === 0) {
+        response.status(500).send({message: "No phone or email provided. Please check your zap and try again."})
+    } else {
+        axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
         .then(res => {
-            const {id} = res.data;
-            send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+            const found = res.data.data.length == 1;
+            if(found) {
+                const {id} = res.data.data[0]
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+            } else {
+                axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
+                .then(res => {
+                    const foundEmail = res.data.data.length == 1;
+                    if(foundEmail) {
+                        const {id} = res.data.data[0]
+                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+                    } else {
+                        createContact(token, name, phone, email, locations)
+                    }
+                })
+                .catch(err => {
+                    return console.log("Error when searching for contact: Email", err)
+                })
+            }
         })
         .catch(err => {
-            return console.log("Error when creating contact", err)
+            return console.log("Error when searching for contact: Phone", err)
         })
-    }
-
-    function send(id, token, locations, campaign_id, how, date, hour, ampm, minute){
-        if(how === "Instant") {
-            return invite.sendInvite(id, token, locations, campaign_id)
-                    .then(res => {
-                        response.json(res.invite.message)
-                        console.log(res.invite.message)
-                    })
-                    .catch(err => {
-                        response.json(err.response.data.message)
-                        console.log("Line: 39")
-                    })
-        } else {
-            return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
-                    .then(res => {
-                        response.json(res.data)
-                        console.log(res.data)
-                    })
-                    .catch(err => {
-                        response.json(err)
-                        console.log("Line: 49")
-                    })
+    
+        function createContact(token, name, phone, email, locations) {
+            const arr = {
+                token,
+                name,
+                email,
+                phone,
+                locations: [locations]
+            }
+            axios.post(process.env.CONTACTS_URL, arr, config)
+            .then(res => {
+                const {id} = res.data;
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+            })
+            .catch(err => {
+                return console.log("Error when creating contact", err)
+            })
+        }
+    
+        function send(id, token, locations, campaign_id, how, date, hour, ampm, minute){
+            if(how === "Instant") {
+                return invite.sendInvite(id, token, locations, campaign_id)
+                        .then(res => {
+                            response.json(res.invite.message)
+                            console.log(res.invite.message)
+                        })
+                        .catch(err => {
+                            response.json(err.response.data.message)
+                            console.log("Line: 39")
+                        })
+            } else {
+                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+                        .then(res => {
+                            response.json(res.data)
+                            console.log(res.data)
+                        })
+                        .catch(err => {
+                            response.json(err)
+                            console.log("Line: 49")
+                        })
+            }
         }
     }
+
 });
 
 module.exports = router;

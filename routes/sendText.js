@@ -24,50 +24,55 @@ router.post('/', (request, response) => {
         }
     }
 
-    axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
-    .then(res => {
-        const found = res.data.data.length == 1;
-        if(found) {
-            const {id} = res.data.data[0]
-            text.sendText(id, template_id , token)
-            .then(res => {
-                response.json(res.data[0])
-            })
-            .catch(err => {
-                console.log(err.response.data)
-                response.status(500).send(err.response.data)
-            })
-        } else {
-            createContact(token, name, phone, locations)
-        }
-    })
-    .catch(err => {
-        return console.log("Error when searching for contact: Phone", err)
-    })
-
-    function createContact(token, name, phone, locations) {
-        const arr = {
-            token,
-            name,
-            phone,
-            locations: [locations]
-        }
-        axios.post(process.env.CONTACTS_URL, arr, config)
+    if(phone.length === 0) {
+        response.status(500).send({message: "No phone or email provided. Please check your zap and try again."})
+    } else {
+        axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
         .then(res => {
-            const {id} = res.data;
-            text.sendText(id, template_id , token)
-            .then(res => {
-                response.json(res.data[0])
-            })
-            .catch(err => {
-                console.log(err.response.data)
-                response.status(500).send(err.response.data)
-            })
+            const found = res.data.data.length == 1;
+            if(found) {
+                const {id} = res.data.data[0]
+                text.sendText(id, template_id , token)
+                .then(res => {
+                    response.json(res.data[0])
+                })
+                .catch(err => {
+                    console.log(err.response.data)
+                    response.status(500).send(err.response.data)
+                })
+            } else {
+                createContact(token, name, phone, locations)
+            }
         })
         .catch(err => {
-            return console.log("Error when creating contact", err)
+            return console.log("Error when searching for contact: Phone", err)
         })
+    
+        function createContact(token, name, phone, locations) {
+            const arr = {
+                token,
+                name,
+                phone,
+                locations: [locations]
+            }
+            axios.post(process.env.CONTACTS_URL, arr, config)
+            .then(res => {
+                const {id} = res.data;
+                text.sendText(id, template_id , token)
+                .then(res => {
+                    response.json(res.data[0])
+                })
+                .catch(err => {
+                    console.log(err.response.data)
+                    response.status(500).send(err.response.data)
+                })
+            })
+            .catch(err => {
+                return console.log("Error when creating contact", err)
+            })
+        }
     }
+
 })
 
 module.exports = router;
