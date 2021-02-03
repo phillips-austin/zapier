@@ -80,7 +80,7 @@ router.post('/', (request, response) => {
                 send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
             })
             .catch(err => {
-                return console.log("Error when creating contact", err)
+                return console.log("Error when creating contact", err.response.data.errors)
             })
         }
     
