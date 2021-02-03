@@ -12,7 +12,7 @@ const config = {
 
 // Send Invite
 router.post('/', (request, response) => {
-    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute} = request.body;
+    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag} = request.body;
     email = email.split(',')[0];
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
@@ -45,14 +45,14 @@ router.post('/', (request, response) => {
             const found = res.data.data.length == 1;
             if(found) {
                 const {id} = res.data.data[0]
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
             } else {
                 axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
                 .then(res => {
                     const foundEmail = res.data.data.length == 1;
                     if(foundEmail) {
                         const {id} = res.data.data[0]
-                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
                     } else {
                         createContact(token, name, phone, email, locations)
                     }
@@ -77,16 +77,16 @@ router.post('/', (request, response) => {
             axios.post(process.env.CONTACTS_URL, arr, config)
             .then(res => {
                 const {id} = res.data;
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute)
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
             })
             .catch(err => {
                 return console.log("Error when creating contact", err)
             })
         }
     
-        function send(id, token, locations, campaign_id, how, date, hour, ampm, minute){
+        function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag){
             if(how === "Instant") {
-                return invite.sendInvite(id, token, locations, campaign_id)
+                return invite.sendInvite(id, token, locations, campaign_id, tag)
                         .then(res => {
                             response.json(res.invite.message)
                             console.log(res.invite.message)
@@ -96,7 +96,7 @@ router.post('/', (request, response) => {
                             console.log("Line: 39")
                         })
             } else {
-                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, response)
+                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, tag)
                         .then(res => {
                             response.json(res.data)
                             console.log(res.data)
