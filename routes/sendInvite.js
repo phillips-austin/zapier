@@ -72,7 +72,7 @@ router.post('/', (request, response) => {
                 name,
                 email,
                 phone,
-                locations: locations
+                locations: [locations]
             }
             axios.post(process.env.CONTACTS_URL, arr, config)
             .then(res => {
