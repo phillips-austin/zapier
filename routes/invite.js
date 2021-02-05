@@ -1,7 +1,6 @@
 const router = require('express').Router();  
 const axios = require('axios');
 const invite = require('../functions/sendInvite');
-const contacts = require('../functions/contacts');
 
 const config = {
     headers: {
@@ -11,19 +10,11 @@ const config = {
 }
 
 // Send Invite
-router.post('/', (request, response) => {
+router.post('/send', (request, response) => {
     var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag} = request.body;
     email = email.split(',')[0];
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
-    const url = process.env.CONTACTS_URL;
-    const arr = {
-        token,
-        name,
-        email,
-        phone,
-        locations: [locations]
-    }
     const getArrByPhone = {
         params: {
             token,
@@ -111,5 +102,17 @@ router.post('/', (request, response) => {
     }
 
 });
+
+// Delete scheduled invite
+router.post('/delete', (req, res, next) => {
+    const {tag} = req.body;
+    axios.get(`${process.env.INVITES_URL}/tag/${tag}`)
+    .then(res => {
+        res.json({data: res.data})
+    })
+    .catch(err => {
+        res.status(500).send({message: "Something went wrong. Please try again."})
+    })
+})
 
 module.exports = router;

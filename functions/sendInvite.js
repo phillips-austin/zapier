@@ -140,6 +140,8 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             tags: [tag]
         };
 
+        console.log(arr)
+
         return (
             axios.post(url, arr, config)
             .then(res => {

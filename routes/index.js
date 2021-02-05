@@ -3,7 +3,7 @@ const auth = require('./auth');
 const createContact = require('./createContact');
 const locations = require('./locations');
 const campaigns = require('./campaigns');
-const sendInvite = require('./sendInvite');
+const invite = require('./invite');
 const sendText = require('./sendText');
 const textTemplates = require('./textTemplates');
 
@@ -13,7 +13,7 @@ router.use('/auth', auth);
 router.use('/createcontact', createContact);
 router.use('/locations', locations);
 router.use('/campaigns', campaigns);
-router.use('/sendInvite', sendInvite);
+router.use('/invite', invite);
 router.use('/sendText', sendText);
 router.use('/textTemplates', textTemplates);
 
