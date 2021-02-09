@@ -153,7 +153,7 @@ router.post('/delete', (req, response, next) => {
         })
     })
     .catch(err => {
-        console.log(err)
+        response.status(500).send({message: "Oops. Something went wrong."})
     })
 })
 
