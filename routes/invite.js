@@ -12,6 +12,7 @@ const config = {
 // Send Invite
 router.post('/send', (request, response) => {
     var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag} = request.body;
+    tag = tag.length === 0 ? null : tag;
     console.log(tag)
     // email = email.split(',')[0];
     // phone = phone.split(',')[0];
