@@ -29,7 +29,7 @@ router.post('/', (request, response) => {
     }
 
     if(phone.length === 0 && email.length === 0){
-        response.status(500).send({message: "No phone or email provided. Please check your zap and try again."})
+        response.status(200).send({message: "No phone or email provided. Please check your zap and try again."})
     } else {
         axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
         .then(res => {
