@@ -127,10 +127,10 @@ router.post('/delete', (req, response, next) => {
     const arr = {
         params: {
             token,
-            tag_id: tag[0]
+            tag_id: tag
         }
     }
-    axios.get(`${process.env.INVITES_URL}/tag/${tag[0]}`, arr, config)
+    axios.get(`${process.env.INVITES_URL}/tag/${tag}`, arr, config)
     .then(res => {
         const invites = res.data.data;
         var count = 0;
