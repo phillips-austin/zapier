@@ -122,17 +122,38 @@ router.get('/update', (req, res, next) => {
 })
 
 // Delete scheduled invite
-router.post('/delete', (req, res, next) => {
+router.post('/delete', (req, response, next) => {
+    const {token, tag} = req.body;
     const arr = {
-        token: "0F1cSZhX6lXx7aLbQhap9YgzYhB00xrxfJ1B3kVJJpYRTLV6bYNmqdACBhWI",
+        params: {
+            token,
+            tag_id: tag[0]
+        }
     }
-    axios.put(`${process.env.INVITES_URL}/${6146663}/cancel`, arr, config)
+    axios.get(`${process.env.INVITES_URL}/tag/${tag[0]}`, arr, config)
     .then(res => {
-        res.json({message: "Invitation deleted"})
+        const invites = res.data.data;
+        var count = 0;
+        invites.map(i => {
+            const {id} = i;
+            const arr = {
+                token,
+                invite_id: id
+            }
+            axios.put(`https://platform.swellcx.com/api/v1/invite/${id}/cancel`, arr, config)
+            .then(res => {
+                count += 1;
+                if(count === invites.length) {
+                    response.json({message: "Deleted"})
+                }
+            })
+            .catch(err => {
+                response.status(200).send({message: "No invitations found"})
+            })
+        })
     })
     .catch(err => {
         console.log(err)
-        res.status(500).send({message: 'Oops... Something went wrong.'})
     })
 })
 

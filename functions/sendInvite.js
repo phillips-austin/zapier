@@ -43,7 +43,7 @@ async function sendInvite(contact_id, token, location_id, campaign_id, tag) {
         contact_id,
         campaign_id,
         scheduled: false,
-        tags: [tag]
+        tags: tag
     };
     const invite = await axios.post(url, arr, config)
     return({invite: invite.data})
@@ -112,7 +112,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             campaign_id,
             scheduled: true,
             send_at: scheduleDate,
-            tags: [tag]
+            tags: tag
         };
         return (
             axios.post(url, arr, config)
@@ -137,7 +137,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
             campaign_id,
             scheduled: true,
             send_at: scheduleDate,
-            tags: [tag]
+            tags: tag
         };
 
         console.log(arr)
@@ -209,7 +209,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             campaign_id,
             scheduled: true,
             send_at: tomorrowFormatted,
-            tags: [tag]
+            tags: tag
         };
         return(
             axios.post(url, arr, config)
@@ -257,7 +257,7 @@ sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minu
             campaign_id,
             scheduled: true,
             send_at: todayScheduled,
-            tags: [tag]
+            tags: tag
         };
         return(
             axios.post(url, arr, config)
