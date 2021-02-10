@@ -11,7 +11,7 @@ const config = {
 
 // Send Invite
 router.post('/send', (request, response) => {
-    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag} = request.body;
+    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag, override} = request.body;
     tag = tag.length === 0 ? null : tag;
     email = email.split(',')[0];
     phone = phone.split(',')[0];
@@ -89,7 +89,7 @@ router.post('/send', (request, response) => {
                             console.log("Line: 39")
                         })
             } else {
-                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, tag)
+                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, tag, override)
                         .then(res => {
                             response.json(res.data)
                             console.log(res.data)
