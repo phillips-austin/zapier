@@ -106,17 +106,32 @@ router.post('/send', (request, response) => {
 
 });
 
-router.get('/update', (req, res, next) => {
-    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag} = req.body;
+router.post('/update', (req, res, next) => {
+    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag_id, tag_name} = req.body;
+    tag_name = tag_name.toLowerCase()
     const arr = {
         params: {
             token, 
-            tag
+            tag_id
         }
     }
-    axios.get(`${process.env.INVITES_URL}/tag/${tag}`,arr ,config)
+    axios.get(`${process.env.INVITES_URL}/tag/${tag_id}`,arr ,config)
     .then(res => {
-        console.log(res.data)
+        const invites = res.data.data;
+        invites.map(i => {
+            if(i.status === 'stopped') {
+                return null
+            } else {
+                i.tags.map(t => {
+                    if(t.name === tag_name) {
+                        const filteredInvite = i;
+                        console.log("Found invite")
+                    } else {
+                        return console.log("No invite found.")
+                    }
+                })
+            }
+        })
     })
     .catch(err => {
         console.log(err)
@@ -135,23 +150,29 @@ router.post('/delete', (req, response, next) => {
     axios.get(`${process.env.INVITES_URL}/tag/${tag}`, arr, config)
     .then(res => {
         const invites = res.data.data;
+        var stoppedCount = 0;
         var count = 0;
         invites.map(i => {
-            const {id} = i;
-            const arr = {
-                token,
-                invite_id: id
-            }
-            axios.put(`https://platform.swellcx.com/api/v1/invite/${id}/cancel`, arr, config)
-            .then(res => {
-                count += 1;
-                if(count === invites.length) {
-                    response.json({message: "Deleted"})
+            if(i.status === 'stopped') {
+                stoppedCount += 1;
+                return null
+            } else {
+                const {id} = i;
+                const arr = {
+                    token,
+                    invite_id: id
                 }
-            })
-            .catch(err => {
-                response.status(200).send({message: "No invitations found"})
-            })
+                axios.put(`https://platform.swellcx.com/api/v1/invite/${id}/cancel`, arr, config)
+                .then(res => {
+                    count += 1;
+                    if(count === invites.length - stoppedCount) {
+                        response.json({message: "Deleted"})
+                    }
+                })
+                .catch(err => {
+                    response.status(200).send({message: "No invitations found"})
+                })
+            }
         })
     })
     .catch(err => {
