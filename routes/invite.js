@@ -142,6 +142,7 @@ router.post('/update', (req, response, next) => {
                 return null
             } else {
                 i.tags.map(t => {
+                    const count = 0;
                     if(t.name === tag_name) {
                         const filteredInviteId = i.id;
                         const {contact_id, location_id, campaign_id} = i;
@@ -165,8 +166,11 @@ router.post('/update', (req, response, next) => {
                             response.status(200).send({message: "No invitations found"})
                         })
                     } else {
+                        count += 1;
+                        if(count === i.length) {
+                            response.status(200).send({message: "No invitations found"})
+                        }
                         console.log("No invite found.")
-                        response.status(200).send({message: "No invitations found"})
                     }
                 })
             }
