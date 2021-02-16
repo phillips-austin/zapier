@@ -38,14 +38,15 @@ router.post('/', (request, response) => {
                 })
                 .catch(err => {
                     console.log(err.response.data)
-                    response.status(500).send(err.response.data)
+                    response.status(200).send(err.response.data)
                 })
             } else {
                 createContact(token, name, phone, locations)
             }
         })
         .catch(err => {
-            return console.log("Error when searching for contact: Phone", err)
+            console.log("Error when searching for contact: Phone", err)
+            response.status(200).send({message: err.response.data})
         })
     
         function createContact(token, name, phone, locations) {

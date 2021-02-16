@@ -49,13 +49,13 @@ router.post('/', (request, response) => {
                     }
                 })
                 .catch(err => {
-                    response.status(500).send({message: "Error when searching for contact"})
+                    response.status(200).send({message: "Error when searching for contact"})
                     console.log("Error when searching for contact: Email", err)
                 })
             }
         })
         .catch(err => {
-            response.status(500).send({message: "Error when searching for contact"})
+            response.status(200).send({message: "Error when searching for contact"})
             console.log("Error when searching for contact: Phone", err)
         })
     
@@ -73,7 +73,7 @@ router.post('/', (request, response) => {
                 response.status(200).send({message: "Contact created with ID: ", id})
             })
             .catch(err => {
-                response.status(500).send({message: "Error creating contact"})
+                response.status(200).send({message: "Error creating contact"})
                 console.log("Error when creating contact")
                 console.log(err)
             })
