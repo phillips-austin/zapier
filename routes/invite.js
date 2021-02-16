@@ -125,7 +125,7 @@ function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, 
 }
 
 router.post('/update', (req, response, next) => {
-    var {token, locations, campaign_id, how, date, hour, ampm, minute, tag, override, tag_id, tag_name} = req.body;
+    var {token, how, date, hour, ampm, minute, tag, override, tag_id, tag_name} = req.body;
     tag_name = tag_name.toLowerCase();
     tag = tag.length === 0 ? null : tag;
     const arr = {
@@ -144,15 +144,15 @@ router.post('/update', (req, response, next) => {
                 i.tags.map(t => {
                     if(t.name === tag_name) {
                         const filteredInviteId = i.id;
-                        const contactId = i.contact_id;
+                        const {contact_id, location_id, campaign_id} = i;
                         const deleteConfig = {
                             token, 
                             invite_id: filteredInviteId
                         }
                         axios.put(`https://platform.swellcx.com/api/v1/invite/${filteredInviteId}/cancel`, deleteConfig, config)
                         .then(done => {
-                            console.log("Deleted for contact: ", contactId)
-                            send(contactId, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                            console.log("Deleted for contact: ", contact_id)
+                            send(contact_id, token, location_id, campaign_id, how, date, hour, ampm, minute, tag, override)
                             .then(res => {
                                 response.json(res)
                             })
@@ -161,6 +161,7 @@ router.post('/update', (req, response, next) => {
                             })
                         })
                         .catch(err => {
+                            console.log(err)
                             response.status(200).send({message: "No invitations found"})
                         })
                     } else {
