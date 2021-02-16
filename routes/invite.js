@@ -199,30 +199,34 @@ router.post('/delete', (req, response, next) => {
         const invites = res.data.data;
         var stoppedCount = 0;
         var count = 0;
-        invites.map(i => {
-            if(i.status === 'stopped') {
-                stoppedCount += 1;
-                if(stoppedCount === invites.length) {
-                    response.status(200).send({message: "No invitations found."})
-                }
-            } else {
-                const {id} = i;
-                const arr = {
-                    token,
-                    invite_id: id
-                }
-                axios.put(`https://platform.swellcx.com/api/v1/invite/${id}/cancel`, arr, config)
-                .then(res => {
-                    count += 1;
-                    if(count === invites.length - stoppedCount) {
-                        response.json({message: "Deleted"})
+        if(invites.length === 0) {
+            response.status(200).send({message: "No scheduled invitations."})
+        } else {
+            invites.map(i => {
+                if(i.status === 'stopped') {
+                    stoppedCount += 1;
+                    if(stoppedCount === invites.length) {
+                        response.status(200).send({message: "No invitations found."})
                     }
-                })
-                .catch(err => {
-                    response.status(200).send({message: "No invitations found"})
-                })
-            }
-        })
+                } else {
+                    const {id} = i;
+                    const arr = {
+                        token,
+                        invite_id: id
+                    }
+                    axios.put(`https://platform.swellcx.com/api/v1/invite/${id}/cancel`, arr, config)
+                    .then(res => {
+                        count += 1;
+                        if(count === invites.length - stoppedCount) {
+                            response.json({message: "Deleted"})
+                        }
+                    })
+                    .catch(err => {
+                        response.status(200).send({message: "No invitations found"})
+                    })
+                }
+            })
+        }
     })
     .catch(err => {
         response.status(200).send({message: "Oops. Something went wrong."})
