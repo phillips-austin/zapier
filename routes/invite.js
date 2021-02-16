@@ -137,12 +137,16 @@ router.post('/update', (req, response, next) => {
     axios.get(`${process.env.INVITES_URL}/tag/${tag_id}`,arr ,config)
     .then(res => {
         const invites = res.data.data;
+        var stoppedCount = 0;
         invites.map(i => {
             if(i.status === 'stopped') {
-                return null
+                stoppedCount += 1;
+                if(stoppedCount === invites.length) {
+                    response.status(200).send({message: 'No invitations found.'})
+                }
             } else {
+                var tagsCount = 0;
                 i.tags.map(t => {
-                    const count = 0;
                     if(t.name === tag_name) {
                         const filteredInviteId = i.id;
                         const {contact_id, location_id, campaign_id} = i;
@@ -166,8 +170,8 @@ router.post('/update', (req, response, next) => {
                             response.status(200).send({message: "No invitations found"})
                         })
                     } else {
-                        count += 1;
-                        if(count === i.length) {
+                        tagsCount += 1;
+                        if(tagsCount === i.tags.length) {
                             response.status(200).send({message: "No invitations found"})
                         }
                         console.log("No invite found.")
@@ -198,7 +202,9 @@ router.post('/delete', (req, response, next) => {
         invites.map(i => {
             if(i.status === 'stopped') {
                 stoppedCount += 1;
-                return null
+                if(stoppedCount === invites.length) {
+                    response.status(200).send({message: "No invitations found."})
+                }
             } else {
                 const {id} = i;
                 const arr = {
