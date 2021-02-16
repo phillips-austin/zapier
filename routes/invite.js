@@ -37,14 +37,26 @@ router.post('/send', (request, response) => {
             const found = res.data.data.length == 1;
             if(found) {
                 const {id} = res.data.data[0]
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                .then(res => {
+                    response.json(res)
+                })
+                .catch(err => {
+                    response.status(200).send({message: err})
+                })
             } else {
                 axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
                 .then(res => {
                     const foundEmail = res.data.data.length == 1;
                     if(foundEmail) {
                         const {id} = res.data.data[0]
-                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
+                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                        .then(res => {
+                            response.json(res)
+                        })
+                        .catch(err => {
+                            response.status(200).send({message: err})
+                        })
                     } else {
                         createContact(token, name, phone, email, locations)
                     }
@@ -71,44 +83,51 @@ router.post('/send', (request, response) => {
             axios.post(process.env.CONTACTS_URL, arr, config)
             .then(res => {
                 const {id} = res.data;
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag)
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                .then(res => {
+                    response.json(res)
+                })
+                .catch(err => {
+                    response.status(200).send({message: err})
+                })
             })
             .catch(err => {
                 console.log("Error when creating contact", err.response.data.errors)
                 response.status(200).send({message: err.response.data.errors})
             })
         }
-    
-        function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag){
-            if(how === "Instant") {
-                return invite.sendInvite(id, token, locations, campaign_id, tag)
-                        .then(res => {
-                            response.json(res.invite.message)
-                            console.log(res.invite.message)
-                        })
-                        .catch(err => {
-                            response.status(200).send({message: err})
-                            console.log("Line: 39")
-                        })
-            } else {
-                return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, tag, override)
-                        .then(res => {
-                            response.json(res.data)
-                            console.log(res.data)
-                        })
-                        .catch(err => {
-                            response.status(200).send({message: err})
-                            console.log("Line: 49")
-                        })
-            }
-        }
     }
 
 });
 
-router.post('/update', (req, res, next) => {
-    var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag_id, tag_name} = req.body;
-    tag_name = tag_name.toLowerCase()
+function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override){
+    if(how === "Instant") {
+        return invite.sendInvite(id, token, locations, campaign_id, tag)
+                .then(res => {
+                    console.log(res.invite.message)
+                    return res.invite.message
+                })
+                .catch(err => {
+                    console.log("Line: 39")
+                    return err
+                })
+    } else {
+        return invite.sendInviteScheduled(id, token, locations, campaign_id, how, date, hour, minute, ampm, tag, override)
+                .then(res => {
+                    console.log(res.data)
+                    return res.data
+                })
+                .catch(err => {
+                    console.log("Line: 49")
+                    return err
+                })
+    }
+}
+
+router.post('/update', (req, response, next) => {
+    var {token, locations, campaign_id, how, date, hour, ampm, minute, tag, override, tag_id, tag_name} = req.body;
+    tag_name = tag_name.toLowerCase();
+    tag = tag.length === 0 ? null : tag;
     const arr = {
         params: {
             token, 
@@ -124,8 +143,26 @@ router.post('/update', (req, res, next) => {
             } else {
                 i.tags.map(t => {
                     if(t.name === tag_name) {
-                        const filteredInvite = i;
-                        console.log("Found invite")
+                        const filteredInviteId = i.id;
+                        const contactId = i.contact_id;
+                        const deleteConfig = {
+                            token, 
+                            invite_id: filteredInviteId
+                        }
+                        axios.put(`https://platform.swellcx.com/api/v1/invite/${filteredInviteId}/cancel`, deleteConfig, config)
+                        .then(done => {
+                            console.log("Deleted for contact: ", contactId)
+                            send(contactId, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                            .then(res => {
+                                response.json(res)
+                            })
+                            .catch(err => {
+                                response.status(200).send({message: err})
+                            })
+                        })
+                        .catch(err => {
+                            response.status(200).send({message: "No invitations found"})
+                        })
                     } else {
                         return console.log("No invite found.")
                     }
