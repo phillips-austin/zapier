@@ -165,7 +165,8 @@ router.post('/update', (req, response, next) => {
                             response.status(200).send({message: "No invitations found"})
                         })
                     } else {
-                        return console.log("No invite found.")
+                        console.log("No invite found.")
+                        response.status(200).send({message: "No invitations found"})
                     }
                 })
             }
