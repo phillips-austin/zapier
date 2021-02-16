@@ -87,7 +87,7 @@ router.post('/send', (request, response) => {
                             console.log(res.invite.message)
                         })
                         .catch(err => {
-                            response.json(err.response.data.message)
+                            response.status(200).send({message: err})
                             console.log("Line: 39")
                         })
             } else {
@@ -97,7 +97,7 @@ router.post('/send', (request, response) => {
                             console.log(res.data)
                         })
                         .catch(err => {
-                            response.status(200).send({message: err.response.data})
+                            response.status(200).send({message: err})
                             console.log("Line: 49")
                         })
             }
