@@ -138,47 +138,51 @@ router.post('/update', (req, response, next) => {
     .then(res => {
         const invites = res.data.data;
         var stoppedCount = 0;
-        invites.map(i => {
-            if(i.status === 'stopped') {
-                stoppedCount += 1;
-                if(stoppedCount === invites.length) {
-                    response.status(200).send({message: 'No invitations found.'})
-                }
-            } else {
-                var tagsCount = 0;
-                i.tags.map(t => {
-                    if(t.name === tag_name) {
-                        const filteredInviteId = i.id;
-                        const {contact_id, location_id, campaign_id} = i;
-                        const deleteConfig = {
-                            token, 
-                            invite_id: filteredInviteId
-                        }
-                        axios.put(`https://platform.swellcx.com/api/v1/invite/${filteredInviteId}/cancel`, deleteConfig, config)
-                        .then(done => {
-                            console.log("Deleted for contact: ", contact_id)
-                            send(contact_id, token, location_id, campaign_id, how, date, hour, ampm, minute, tag, override)
-                            .then(res => {
-                                response.json(res)
+        if(invites.length === 0) {
+            response.status(200).send({message: "No invitations with that ID"})
+        } else {
+            invites.map(i => {
+                if(i.status === 'stopped') {
+                    stoppedCount += 1;
+                    if(stoppedCount === invites.length) {
+                        response.status(200).send({message: 'No invitations found.'})
+                    }
+                } else {
+                    var tagsCount = 0;
+                    i.tags.map(t => {
+                        if(t.name === tag_name) {
+                            const filteredInviteId = i.id;
+                            const {contact_id, location_id, campaign_id} = i;
+                            const deleteConfig = {
+                                token, 
+                                invite_id: filteredInviteId
+                            }
+                            axios.put(`https://platform.swellcx.com/api/v1/invite/${filteredInviteId}/cancel`, deleteConfig, config)
+                            .then(done => {
+                                console.log("Deleted for contact: ", contact_id)
+                                send(contact_id, token, location_id, campaign_id, how, date, hour, ampm, minute, tag, override)
+                                .then(res => {
+                                    response.json(res)
+                                })
+                                .catch(err => {
+                                    response.status(200).send({message: err})
+                                })
                             })
                             .catch(err => {
-                                response.status(200).send({message: err})
+                                console.log(err)
+                                response.status(200).send({message: "No invitations found"})
                             })
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            response.status(200).send({message: "No invitations found"})
-                        })
-                    } else {
-                        tagsCount += 1;
-                        if(tagsCount === i.tags.length) {
-                            response.status(200).send({message: "No invitations found"})
+                        } else {
+                            tagsCount += 1;
+                            if(tagsCount === i.tags.length) {
+                                response.status(200).send({message: "No invitations found"})
+                            }
+                            console.log("No invite found.")
                         }
-                        console.log("No invite found.")
-                    }
-                })
-            }
-        })
+                    })
+                }
+            })
+        }
     })
     .catch(err => {
         console.log(err)
