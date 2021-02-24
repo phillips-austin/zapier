@@ -163,7 +163,7 @@ scheduleInvite = (contact_id, token, location_id, campaign_id, how, date, hour, 
 
 // Send invite Today
 
-sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, tag) => {
+sendTodayAtTime = (contact_id, token, location_id, campaign_id, date, hour, minute, ampm, tag, override) => {
     const dateConverted = new Date(date)
     const hourConverted = () => {
         if (hour === 12) {
