@@ -118,7 +118,7 @@ function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, 
                     return res.data
                 })
                 .catch(err => {
-                    console.log("Line: 49")
+                    console.log(err)
                     return err
                 })
     }
