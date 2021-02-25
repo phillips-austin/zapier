@@ -108,7 +108,7 @@ function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, 
                     return res.invite.message
                 })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err.response.data)
                     return err
                 })
     } else {
