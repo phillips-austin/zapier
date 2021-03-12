@@ -29,6 +29,8 @@ router.post('/send', (request, response) => {
         }
     }
 
+    console.log(request.body)
+
     if(phone.length === 0 && email.length === 0) {
         response.status(200).send({message: "No phone or email provided. Please check your zap and try again."})
     } else {
