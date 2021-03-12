@@ -16,6 +16,7 @@ router.post('/send', (request, response) => {
     email = email.split(',')[0];
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
+    minute = (minute < 10 ?  '0' + minute : minute)
     const getArrByPhone = {
         params: {
             token,
@@ -28,8 +29,6 @@ router.post('/send', (request, response) => {
             email
         }
     }
-
-    console.log(request.body)
 
     if(phone.length === 0 && email.length === 0) {
         response.status(200).send({message: "No phone or email provided. Please check your zap and try again."})
