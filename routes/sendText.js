@@ -16,6 +16,7 @@ router.post('/', (request, response) => {
     const {token} = request.query;
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
+    phone = phone.includes('+1') ? phone.split('+1')[1] : phone
 
     const getArrByPhone = {
         params: {
