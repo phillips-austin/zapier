@@ -77,7 +77,7 @@ router.post('/', (request, response) => {
             .catch(err => {
                 response.status(200).send({message: "Error creating contact"})
                 console.log("Error when creating contact")
-                console.log(err.response.data.errors)
+                console.log(err.response.data)
             })
         }
     }
