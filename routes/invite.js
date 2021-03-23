@@ -16,6 +16,7 @@ router.post('/send', (request, response) => {
     email = email.split(',')[0];
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
+    phone = phone.includes('+1') ? phone.split('+1')[1] : phone
     minute = (minute < 10 ?  '0' + minute : minute)
     const getArrByPhone = {
         params: {
