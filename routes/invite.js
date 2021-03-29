@@ -31,8 +31,6 @@ router.post('/send', (request, response) => {
         }
     }
 
-    console.log(phone)
-
     if(phone.length === 0 && email.length === 0) {
         response.status(200).send({message: "No phone or email provided. Please check your zap and try again."})
     } else {
@@ -41,12 +39,22 @@ router.post('/send', (request, response) => {
             const found = res.data.data.length == 1;
             if(found) {
                 const {id} = res.data.data[0]
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                handleChecks(id, token, campaign_id, tag)
                 .then(res => {
-                    response.json(res)
+                    if(res === true) {
+                        response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
+                    } else {
+                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                        .then(res => {
+                            response.json(res)
+                        })
+                        .catch( err => {
+                            response.status(500).send(err)
+                        })
+                    }
                 })
                 .catch(err => {
-                    response.status(200).send({message: err})
+                    console.log(err)
                 })
             } else {
                 axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
@@ -54,12 +62,22 @@ router.post('/send', (request, response) => {
                     const foundEmail = res.data.data.length == 1;
                     if(foundEmail) {
                         const {id} = res.data.data[0]
-                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                        handleChecks(id, token, campaign_id, tag)
                         .then(res => {
-                            response.json(res)
+                            if(res === true) {
+                                response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
+                            } else {
+                                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                                .then(res => {
+                                    response.json(res)
+                                })
+                                .catch( err => {
+                                    response.status(500).send(err)
+                                })
+                            }
                         })
                         .catch(err => {
-                            response.status(200).send({message: err})
+                            console.log(err)
                         })
                     } else {
                         createContact(token, name, phone, email, locations)
@@ -87,12 +105,22 @@ router.post('/send', (request, response) => {
             axios.post(process.env.CONTACTS_URL, arr, config)
             .then(res => {
                 const {id} = res.data;
-                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                handleChecks(id, token, campaign_id, tag)
                 .then(res => {
-                    response.json(res)
+                    if(res === true) {
+                        response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
+                    } else {
+                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                        .then(res => {
+                            response.json(res)
+                        })
+                        .catch( err => {
+                            response.status(500).send(err)
+                        })
+                    }
                 })
                 .catch(err => {
-                    response.status(200).send({message: err})
+                    console.log(err)
                 })
             })
             .catch(err => {
@@ -103,6 +131,73 @@ router.post('/send', (request, response) => {
     }
 
 });
+
+async function handleChecks(id, token, campaign_id, tag) {
+    const campaigns = await checkForExistingCampaign(id, token, campaign_id, tag)
+    return campaigns
+}
+
+async function checkForExistingCampaign(id, token, campaign_id, tag) {
+    const arr = {
+        params: {
+            token,
+            contact_id: id
+        }
+    }
+    const data = await axios.get(`${process.env.CONTACTS_URL}/${id}/invites`, arr, config)
+    .then(res => {
+        const invites = res.data.data;
+        var matchedCampaignTags = [];
+        for (var i = 0; i < invites.length; i++) {
+            if (invites[i].campaign_id === campaign_id && invites[i].status === 'scheduled') {
+                matchedCampaignTags.push(invites[i])
+            }
+            if (i === invites.length - 1) {
+                if (matchedCampaignTags.length > 0) {
+                    const checkForTags = checkIfTagsMatch(matchedCampaignTags, tag)
+                    return checkForTags
+                } else {
+                    return false
+                }
+            }
+        }
+    })
+    .catch(err => {
+        console.log(err)
+    })
+
+    return data
+}
+
+async function checkIfTagsMatch(invites, tag) {
+    if(tag) {
+        var matches = [];
+        for (var i = 0; i < invites.length; i++) {
+            var tagMatch = 0;
+            for (var t = 0; t < invites[i].tags.length; t++) {
+                if (tag.includes(invites[i].tags[t].name)) {
+                    tagMatch += 1
+                }
+
+                if(t === invites[i].tags.length - 1) {
+                    if (tagMatch === tag.length && tagMatch === invites[i].tags.length) {
+                        matches.push(invites[i])
+                    }
+                }
+            }
+
+            if(i === invites.length - 1) {
+                if (matches.length > 0) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+    } else {
+        return false
+    }
+}
 
 function send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override){
     if(how === "Instant") {
