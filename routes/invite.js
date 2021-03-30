@@ -50,10 +50,12 @@ router.post('/send', (request, response) => {
                         })
                         .catch( err => {
                             response.status(500).send(err)
+                            console.log(err)
                         })
                     }
                 })
                 .catch(err => {
+                    response.status(500).send(err)
                     console.log(err)
                 })
             } else {
@@ -73,11 +75,13 @@ router.post('/send', (request, response) => {
                                 })
                                 .catch( err => {
                                     response.status(500).send(err)
+                                    console.log(err)
                                 })
                             }
                         })
                         .catch(err => {
                             console.log(err)
+                            response.status(500).send(err)
                         })
                     } else {
                         createContact(token, name, phone, email, locations)
@@ -85,13 +89,13 @@ router.post('/send', (request, response) => {
                 })
                 .catch(err => {
                     console.log("Error when searching for contact: Email", err)
-                    response.status(200).send({message: err.response.data})
+                    response.status(500).send({message: err.response.data})
                 })
             }
         })
         .catch(err => {
             console.log("Error when searching for contact: Phone", err)
-            response.status(200).send({message: err.response.data})
+            response.status(500).send({message: err.response.data})
         })
     
         function createContact(token, name, phone, email, locations) {
@@ -121,11 +125,12 @@ router.post('/send', (request, response) => {
                 })
                 .catch(err => {
                     console.log(err)
+                    response.status(500).send(err)
                 })
             })
             .catch(err => {
                 console.log("Error when creating contact", err.response.data.errors)
-                response.status(200).send({message: err.response.data.errors})
+                response.status(500).send({message: err.response.data.errors})
             })
         }
     }
@@ -164,6 +169,7 @@ async function checkForExistingCampaign(id, token, campaign_id, tag) {
     })
     .catch(err => {
         console.log(err)
+        return err
     })
 
     return data
@@ -264,7 +270,7 @@ router.post('/update', (req, response, next) => {
                                     response.json(res)
                                 })
                                 .catch(err => {
-                                    response.status(200).send({message: err})
+                                    response.status(500).send({message: err})
                                 })
                             })
                             .catch(err => {
@@ -332,7 +338,7 @@ router.post('/delete', (req, response, next) => {
         }
     })
     .catch(err => {
-        response.status(200).send({message: "Oops. Something went wrong."})
+        response.status(500).send({message: "Oops. Something went wrong."})
     })
 })
 
