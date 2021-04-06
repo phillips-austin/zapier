@@ -1,7 +1,7 @@
 const router = require('express').Router();  
 
 // Format incoming date
-router.get('/', (request, response) => {
+router.post('/', (request, response) => {
     var {date, operator, unit} = request.body;
     const incomingDate = new Date(date)
 
