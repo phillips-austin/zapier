@@ -5,33 +5,35 @@ router.get('/', (request, response) => {
     var {date, operator, unit} = request.body;
     const incomingDate = new Date(date)
 
-    if(operator === 'Add') {
-        add(incomingDate, unit)
-        .then(res => {
-            console.log({Date: res})
-            response.json({date: res})
-        })
-        .catch(err => {
-            response.status(500).send({message: "oops something went wrong, please try again."})
-        })
-    } else {
-        minus(incomingDate, unit)
-        .then(res => {
-            console.log({Date: res})
-            response.json({date: res})
-        })
-        .catch(err => {
-            response.status(500).send({message: "oops something went wrong, please try again."})
-        })
-    }
+    console.log(date, incomingDate)
 
-    async function add(date, unit) {
-        const data = await new Date(date.setDate(date.getDate()+ unit))
+    // if(operator === 'Add') {
+    //     add(incomingDate, unit)
+    //     .then(res => {
+    //         console.log({Date: res})
+    //         response.json({date: res})
+    //     })
+    //     .catch(err => {
+    //         response.status(500).send({message: "oops something went wrong, please try again."})
+    //     })
+    // } else {
+    //     minus(incomingDate, unit)
+    //     .then(res => {
+    //         console.log({Date: res})
+    //         response.json({date: res})
+    //     })
+    //     .catch(err => {
+    //         response.status(500).send({message: "oops something went wrong, please try again."})
+    //     })
+    // }
+
+    async function add(incomingDate, unit) {
+        const data = await new Date(incomingDate.setDate(incomingDate.getDate()+ unit))
         return data
     }
 
-    async function minus(date, unit) {
-        const data = await new Date(date.setDate(date.getDate()- unit))
+    async function minus(incomingDate, unit) {
+        const data = await new Date(incomingDate.setDate(incomingDate.getDate()- unit))
         return data
     }
 });
