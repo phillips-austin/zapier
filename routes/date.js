@@ -14,7 +14,7 @@ router.get('/', (request, response) => {
         return new Date(date.setDate(date.getDate()- unit))
     }
 
-    response.json(operator)
+    response.json({date: operator})
 });
 
 module.exports = router;
