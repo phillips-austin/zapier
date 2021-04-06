@@ -8,6 +8,7 @@ router.get('/', (request, response) => {
     if(operator === 'Add') {
         add(incomingDate, unit)
         .then(res => {
+            console.log({Date: res})
             response.json({date: res})
         })
         .catch(err => {
@@ -16,6 +17,7 @@ router.get('/', (request, response) => {
     } else {
         minus(incomingDate, unit)
         .then(res => {
+            console.log({Date: res})
             response.json({date: res})
         })
         .catch(err => {
