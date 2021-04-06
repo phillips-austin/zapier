@@ -5,7 +5,7 @@ router.get('/', (request, response) => {
     var {date, operator, unit} = request.body;
     const incomingDate = new Date(date)
 
-    console.log(request.body)
+    console.log(request)
 
     // if(operator === 'Add') {
     //     add(incomingDate, unit)
