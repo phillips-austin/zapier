@@ -6,6 +6,7 @@ const campaigns = require('./campaigns');
 const invite = require('./invite');
 const sendText = require('./sendText');
 const textTemplates = require('./textTemplates');
+const date = require('./date');
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use('/campaigns', campaigns);
 router.use('/invite', invite);
 router.use('/sendText', sendText);
 router.use('/textTemplates', textTemplates);
+router.use('/date', date);
 
 
 module.exports = router;
