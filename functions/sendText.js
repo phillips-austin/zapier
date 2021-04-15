@@ -21,7 +21,7 @@ async function sendText(contact_id, chat_template_id, token, message, sendTempla
     const freeBodyArr = {
         contact_id,
         message,
-        direction: 'outbound',
+        direction: 'inbound',
         media_type: 'text',
     }
 
