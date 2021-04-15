@@ -22,7 +22,7 @@ async function sendText(contact_id, chat_template_id, token, message, sendTempla
         contact_id,
         message,
         direction: 'outbound',
-        media_type: 'text'
+        media_type: 'text',
     }
 
     const url = process.env.SEND_TEXT_URL;

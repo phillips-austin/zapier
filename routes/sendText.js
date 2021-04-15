@@ -30,17 +30,30 @@ router.post('/', (request, response) => {
     } else {
         axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
         .then(res => {
-            const found = res.data.data.length == 1;
+            const found = res.data.data.length > 0;
+            var contactId = 0;
             if(found) {
-                const {id} = res.data.data[0]
-                text.sendText(id, template_id , token, message, sendTemplate)
-                .then(res => {
-                    response.json(res.data[0])
-                })
-                .catch(err => {
-                    console.log(err.response.data)
-                    response.status(200).send(err.response.data)
-                })
+               for (var i = 0; i < res.data.data.length; i++){
+                   const match = res.data.data[i].locations.some(el => el.id === locations)
+                   if (match) {
+                       contactId = res.data.data[i].id
+                   }
+
+                   if (i === res.data.data.length - 1) {
+                       if (contactId > 0) {
+                            text.sendText(contactId, template_id , token, message, sendTemplate)
+                            .then(res => {
+                                response.json(res.data[0])
+                            })
+                            .catch(err => {
+                                console.log(err.response.data)
+                                response.status(500).send(err.response.data)
+                            })
+                       } else {
+                            createContact(token, name, phone, locations)
+                       }
+                   }
+               }
             } else {
                 createContact(token, name, phone, locations)
             }
@@ -70,7 +83,7 @@ router.post('/', (request, response) => {
                 })
             })
             .catch(err => {
-                return console.log("Error when creating contact", err)
+                return console.log("Error when creating contact", err.response.data)
             })
         }
     }
