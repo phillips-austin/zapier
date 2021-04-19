@@ -12,7 +12,7 @@ const config = {
 
 // Create Contact Action
 router.post('/', (request, response) => {
-    var {name, phone, locations, template_id, message, sendTemplate} = request.body;
+    var {name, phone, locations, template_id, message, sendTemplate, direction} = request.body;
     const {token} = request.query;
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
@@ -41,7 +41,7 @@ router.post('/', (request, response) => {
 
                    if (i === res.data.data.length - 1) {
                        if (contactId > 0) {
-                            text.sendText(contactId, template_id , token, message, sendTemplate)
+                            text.sendText(contactId, template_id , token, message, sendTemplate, direction)
                             .then(res => {
                                 response.json(res.data[0])
                             })
@@ -73,7 +73,7 @@ router.post('/', (request, response) => {
             axios.post(process.env.CONTACTS_URL, arr, config)
             .then(res => {
                 const {id} = res.data;
-                text.sendText(id, template_id , token, message, sendTemplate)
+                text.sendText(id, template_id , token, message, sendTemplate, direction)
                 .then(res => {
                     response.json(res.data[0])
                 })
