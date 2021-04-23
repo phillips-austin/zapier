@@ -10,7 +10,7 @@ async function sendText(contact_id, chat_template_id, token, message, sendTempla
             token,
             token,
             contact_id,
-            message: 'filler',
+            message,
             media_type: 'text',
             direction
         }
@@ -25,7 +25,7 @@ async function sendText(contact_id, chat_template_id, token, message, sendTempla
             token,
             contact_id,
             chat_template_id,
-            message,
+            message: 'filler',
             media_type: 'text',
             direction
         }
