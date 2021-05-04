@@ -14,37 +14,26 @@ router.post('/send', (request, response) => {
     var {token, phone, name, email, locations, campaign_id, how, date, hour, ampm, minute, tag, override} = request.body;
     tag = tag.length === 0 ? null : tag;
     email = email.split(',')[0];
+    email = email === '' ? null : email
     phone = phone.split(',')[0];
     phone = phone.replace(/[^\d\+]/g,"");
     phone = phone.includes('+1') ? phone.split('+1')[1] : phone
+    phone = phone === '' ? null : phone
     minute = (minute < 10 ?  '0' + minute : minute)
-    const getArrByPhone = {
-        params: {
-            token,
-            phone
-        }
-    }
-    const getArrByEmail = {
-        params: {
-            token,
-            email
-        }
-    }
 
-    if(phone.length === 0 && email.length === 0) {
+    if(phone === null && email === null) {
         response.status(200).send({message: "No phone or email provided. Please check your zap and try again."})
     } else {
-        axios.get(process.env.CONTACTS_URL, getArrByPhone, config)
+        getContact(phone, email, locations, token)
         .then(res => {
-            const found = res.data.data.length == 1;
-            if(found) {
-                const {id} = res.data.data[0]
-                handleChecks(id, token, campaign_id, tag)
+            const contactId = res.id;
+            if (contactId > 0) {
+                handleChecks(contactId, token, campaign_id, tag)
                 .then(res => {
                     if(res === true) {
                         response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
                     } else {
-                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
+                        send(contactId, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
                         .then(res => {
                             response.json(res)
                         })
@@ -59,83 +48,82 @@ router.post('/send', (request, response) => {
                     console.log(err)
                 })
             } else {
-                axios.get(process.env.CONTACTS_URL, getArrByEmail, config)
+                createContact(token, name, phone, email, locations, response)
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+});
+
+async function getContact(phone, email, locations, token) {
+    const arrByPhone = {
+        params: {
+            token,
+            phone,
+            location_id: locations
+        }
+    }
+
+    const arrByEmail = {
+        params: {
+            token,
+            email,
+            location_id: locations
+        }
+    }
+    const contactByEmail = await axios.get(process.env.CONTACTS_URL, arrByEmail, config)
+    const contactByPhone = await axios.get(process.env.CONTACTS_URL, arrByPhone, config)
+    const phoneFound = phone === null ? false : contactByPhone.data.data.length > 0
+    const emailFound = email === null ? false : contactByEmail.data.data.length > 0
+
+    if (phoneFound === false && emailFound === false) {
+        return {id: 0}
+    } else if (phoneFound === false && emailFound === true) {
+        return {id: contactByEmail.data.data[0].id}
+    } else if (phoneFound === true && emailFound === false) {
+        return {id: contactByPhone.data.data[0].id}
+    } else if (phoneFound === true && emailFound === true) {
+        return {id: contactByPhone.data.data[0].id}
+    }
+}
+
+function createContact(token, name, phone, email, locations, response) {
+    const arr = {
+        token,
+        name,
+        email,
+        phone,
+        locations: [locations]
+    }
+    axios.post(process.env.CONTACTS_URL, arr, config)
+    .then(res => {
+        const {id} = res.data;
+        handleChecks(id, token, campaign_id, tag)
+        .then(res => {
+            if(res === true) {
+                response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
+            } else {
+                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
                 .then(res => {
-                    const foundEmail = res.data.data.length == 1;
-                    if(foundEmail) {
-                        const {id} = res.data.data[0]
-                        handleChecks(id, token, campaign_id, tag)
-                        .then(res => {
-                            if(res === true) {
-                                response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
-                            } else {
-                                send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
-                                .then(res => {
-                                    response.json(res)
-                                })
-                                .catch( err => {
-                                    response.status(500).send(err)
-                                    console.log(err)
-                                })
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            response.status(500).send(err)
-                        })
-                    } else {
-                        createContact(token, name, phone, email, locations)
-                    }
+                    response.json(res)
                 })
-                .catch(err => {
-                    console.log("Error when searching for contact: Email", err)
-                    response.status(500).send({message: err.response.data})
+                .catch( err => {
+                    response.status(500).send(err)
                 })
             }
         })
         .catch(err => {
-            console.log("Error when searching for contact: Phone", err)
-            response.status(500).send({message: err.response.data})
+            console.log(err)
+            response.status(500).send(err)
         })
-    
-        function createContact(token, name, phone, email, locations) {
-            const arr = {
-                token,
-                name,
-                email,
-                phone,
-                locations: [locations]
-            }
-            axios.post(process.env.CONTACTS_URL, arr, config)
-            .then(res => {
-                const {id} = res.data;
-                handleChecks(id, token, campaign_id, tag)
-                .then(res => {
-                    if(res === true) {
-                        response.json({message: "This contact alredy has a scheduled invitation with matching tags and campaign id."})
-                    } else {
-                        send(id, token, locations, campaign_id, how, date, hour, ampm, minute, tag, override)
-                        .then(res => {
-                            response.json(res)
-                        })
-                        .catch( err => {
-                            response.status(500).send(err)
-                        })
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    response.status(500).send(err)
-                })
-            })
-            .catch(err => {
-                console.log("Error when creating contact", err.response.data.errors)
-                response.status(500).send({message: err.response.data.errors})
-            })
-        }
-    }
-
-});
+    })
+    .catch(err => {
+        console.log("Error when creating contact", err.response.data.errors)
+        response.status(500).send({message: err.response.data.errors})
+    })
+}
 
 async function handleChecks(id, token, campaign_id, tag) {
     const campaigns = await checkForExistingCampaign(id, token, campaign_id, tag)
